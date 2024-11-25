@@ -16,24 +16,27 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class FarmResource extends Resource
 {
     protected static ?string $model = Farm::class;
+    protected static ?string $pluralLabel = 'Tambak';
+
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static ?string $navigationLabel = "Tambak";
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                ->label('Farm Name')
+                ->label('Nama Tambak')
                 ->required()
                 ->maxLength(255),
             Forms\Components\TextArea::make('description')
-                ->label('Farm Description')
+                ->label('Deskripsi Tambak')
                 ->nullable()
                 ->maxLength(1000),
             // Misalnya untuk relasi farm dengan user (owner atau manager)
             Forms\Components\Select::make('user_id')
-                ->label('Owner/Farm Manager')
+                ->label('Manajer Tambak')
                 ->relationship('user', 'name')
                 ->required(),
             ]);
@@ -44,16 +47,16 @@ class FarmResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                ->label('Farm Name')
+                ->label('Nama Tambak')
                 ->searchable(),
             Tables\Columns\TextColumn::make('description')
-                ->label('Farm Description')
+                ->label('Deskripsi Tambak')
                 ->limit(50), // Membatasi panjang deskripsi yang ditampilkan
             Tables\Columns\TextColumn::make('user.name')
-                ->label('Owner/Farm Manager')
+                ->label('Manajer Tambak')
                 ->sortable(),
             Tables\Columns\TextColumn::make('created_at')
-                ->label('Created At')
+                ->label('Di buat')
                 ->dateTime(),
             ])
             ->filters([

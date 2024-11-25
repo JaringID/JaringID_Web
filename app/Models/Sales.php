@@ -10,11 +10,12 @@ class Sales extends Model
     use HasFactory;
 
     protected $fillable = [
-        'farm_id',       // untuk relasi ke farm
-        'sale_date',     // tanggal penjualan
-        'quantity',      // jumlah yang terjual
-        'price',         // harga per unit
-        'total_amount',  // total uang yang diterima dari penjualan
+        'farm_id',
+        'harvest_id',
+        'sale_date',
+        'quantity',
+        'price',
+        'total_amount',
     ];
 
     public function farm()
@@ -25,5 +26,15 @@ class Sales extends Model
     public function harvest()
     {
         return $this->belongsTo(Harvest::class);
+    }
+
+    // Event untuk menghitung total_amount otomatis
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($sales) {
+            $sales->total_amount = $sales->price * $sales->quantity;
+        });
     }
 }

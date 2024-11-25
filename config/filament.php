@@ -92,6 +92,12 @@ return [
     | Livewire's standard 200ms delay.
     |
     */
+    'resources' => [
+    \App\Filament\Resources\FeedScheduleResource::class,
+],
 
     'livewire_loading_delay' => 'default',
 ];
+
+
+

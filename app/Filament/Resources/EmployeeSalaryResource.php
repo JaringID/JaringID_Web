@@ -20,21 +20,22 @@ use App\Filament\Resources\EmployeeSalaryResource\RelationManagers;
 class EmployeeSalaryResource extends Resource
 {
     protected static ?string $model = EmployeeSalary::class;
+    protected static ?string $pluralLabel = 'Gaji Karyawan';
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group'; // atau 'heroicon-o-briefcase'
 
-    protected static ?string $navigationLabel = 'Employee Salary';
+    protected static ?string $navigationLabel = 'Gaji Karyawan';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Select::make('user_id')
-                    ->label('Employee')
+                    ->label('Manajer/Karyawan')
                     ->options(User::all()->pluck('name', 'id'))
                     ->required(),
                 TextInput::make('salary_amount')
-                    ->label('Salary Amount')
+                    ->label('Jumlah Gaji')
                     ->required()
                     ->numeric(),
             ]);
@@ -44,8 +45,8 @@ class EmployeeSalaryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('user.name')->label('Employee Name'),
-                TextColumn::make('salary_amount')->label('Salary Amount'),
+                TextColumn::make('user.name')->label('Nama Manajer/Karyawan'),
+                TextColumn::make('salary_amount')->label('Jumlah Gaji'),
             ])
             ->filters([
                 //

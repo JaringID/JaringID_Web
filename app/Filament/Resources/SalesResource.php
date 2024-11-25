@@ -19,31 +19,36 @@ use App\Filament\Resources\SalesResource\Pages;
 class SalesResource extends Resource
 {
     protected static ?string $model = Sales::class;
+    protected static ?string $pluralLabel = 'Penjualan';
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-    protected static ?string $navigationLabel = 'Sales';
+    protected static ?string $navigationLabel = 'Penjualan';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Select::make('farm_id')
-                    ->label('Farm')
+                    ->label('Tambak')
                     ->options(Farm::query()->pluck('name', 'id')->toArray())
                     ->required(),
                 Select::make('harvest_id')
-                    ->label('Harvest')
+                    ->label('Panen')
                     ->options(Harvest::query()->pluck('id', 'id')->toArray())
                     ->required(),
                 DatePicker::make('sale_date')
-                    ->label('Sale Date')
+                    ->label('tanggal Penjualan')
                     ->required(),
                 TextInput::make('quantity')
-                    ->label('Quantity Sold')
+                    ->label('Jumlah yang Terjual')
                     ->required()
                     ->numeric(),
-                TextInput::make('total_price')
-                    ->label('Total Sale Amount')
+                TextInput::make('price')
+                    ->label('Harga')
+                    ->required()
+                    ->numeric(),
+                TextInput::make('total_amount')
+                    ->label('Total Pendapatan')
                     ->required()
                     ->numeric(),
             ]);
@@ -53,11 +58,11 @@ class SalesResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('farm.name')->label('Farm Name'),
-                TextColumn::make('harvest.quantity')->label('Harvest Quantity'),
-                TextColumn::make('sale_date')->label('Sale Date')->date(),
-                TextColumn::make('quantity')->label('Quantity Sold'),
-                TextColumn::make('total_price')->label('Total Sale Amount'),
+                TextColumn::make('farm.name')->label('Nama Tambak'),
+                TextColumn::make('harvest.quantity')->label('Jumlah Panen'),
+                TextColumn::make('sale_date')->label('Tanggal Penjualan')->date(),
+                TextColumn::make('quantity')->label('Jumlah yang terjual'),
+                TextColumn::make('total_amount')->label('Total Pendapatan'),
             ])
             ->filters([
                 // Tambahkan filter jika diperlukan

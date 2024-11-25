@@ -21,24 +21,25 @@ use App\Filament\Resources\HarvestResource\RelationManagers;
 class HarvestResource extends Resource
 {
     protected static ?string $model = Harvest::class;
+    protected static ?string $pluralLabel = 'Pengaturan Panen';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationLabel = 'Harvest';
+    protected static ?string $navigationLabel = 'Panen';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Select::make('farm_id')
-                    ->label('Farm')
+                    ->label('Tambak')
                     ->options(Farm::all()->pluck('name', 'id'))
                     ->required(),
                 DatePicker::make('harvest_date')
-                    ->label('Harvest Date')
+                    ->label('Tanggal Panen')
                     ->required(),
                 TextInput::make('quantity')
-                    ->label('Quantity')
+                    ->label('Jumlah Panen')
                     ->required()
                     ->numeric(),
             ]);
@@ -48,9 +49,9 @@ class HarvestResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('farm.name')->label('Farm Name'),
-                TextColumn::make('harvest_date')->label('Harvest Date'),
-                TextColumn::make('quantity')->label('Quantity'),
+                TextColumn::make('farm.name')->label('Nama Tambak'),
+                TextColumn::make('harvest_date')->label('Tanggal Panen'),
+                TextColumn::make('quantity')->label('Jumlah Panen'),
             ])
             ->filters([
                 //
