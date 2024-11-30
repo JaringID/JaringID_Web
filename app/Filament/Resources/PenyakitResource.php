@@ -31,14 +31,12 @@ class PenyakitResource extends Resource
                 TextInput::make('nama')
                     ->required()
                     ->label('Nama Penyakit'),
-                FileUpload::make('image')
-                    ->image()
-                    ->directory('penyakit-images')
+                    FileUpload::make('image')
+                    ->image() // Menandakan bahwa ini file gambar
+                    ->disk('public') // Disk penyimpanan (sesuai konfigurasi di config/filesystems.php)
+                    ->directory('penyakit-images') // Folder penyimpanan
                     ->label('Foto Penyakit')
-                    ->store(function (UploadedFile $file) {
-                        \Log::info('File Uploaded: ' . $file->getClientOriginalName());
-                        return $file->store('penyakit-images', 'public');
-                    }),
+                    ->required(),
                 Textarea::make('deskripsi')
                     ->label('Deskripsi'),
             ]);

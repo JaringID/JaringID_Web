@@ -21,10 +21,10 @@ class Penyakit extends Model
      *
      * @param string|null $value
      */
-    public function getImageUrlAttribute()
-{
-    return $this->image ? asset('storage/' . $this->image) : null;
-}
+    public function getImageAttribute($value)
+    {
+        return url('storage/' . $value);
+    }
 
 
     /**
@@ -47,3 +47,4 @@ class Penyakit extends Model
         });
     }
 }
+
