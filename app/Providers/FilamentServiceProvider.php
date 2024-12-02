@@ -5,6 +5,8 @@ namespace App\Providers;
 use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use App\Filament\Widgets\UserProfile;
+use App\Filament\Resources\UserResource;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,15 @@ class FilamentServiceProvider extends ServiceProvider
             if (Auth::check() && Auth::user()->role !== 'owner' && Auth::user()->role !== 'farm_manager' ) {
                 abort(403, 'Akses Ditolak Wak');
             }
+            Filament::registerWidgets([
+                UserProfile::class,
+            ]);
+            Filament::registerResources([
+                UserResource::class,
+            ]);
+            
+            
+           
         });
 
         

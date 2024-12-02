@@ -21,10 +21,18 @@ class Penyakit extends Model
      *
      * @param string|null $value
      */
-    public function getImageAttribute($value)
-    {
-        return url('storage/' . $value);
-    }
+    public function saveImage($file)
+{
+    return $file->store('penyakit-images', 'public'); // Menyimpan gambar di disk 'public' dalam folder 'penyakit-images'
+}
+
+public function getImageAttribute($value)
+{
+    // Cek apakah value ada dan sesuai
+    return $value ? url('storage/penyakit-images/' . $value) : null;
+}
+
+
 
 
     /**

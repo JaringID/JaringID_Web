@@ -1,12 +1,17 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Models\Farm;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
-use App\Http\Controllers\AuthController;
 use App\Models\Penyakit;
+use Illuminate\Http\Request;
+use App\Models\MonthlyReport;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KolamController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TambakController;
+use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\FeedScheduleController;
 
 /*
@@ -40,4 +45,24 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/penyakit', function () {
     return response()->json(Penyakit::all());
 });
+
+// Route::get('/profile', function () {
+//     return response()->json(User::all());
+// });
+Route::post('/tambak', [TambakController::class, 'store']);
+
+Route::get('/tambak', function () {
+    return response()->json(Farm::all());
+});
+
+Route::get('/reports', function () {
+    return response()->json(MonthlyReport::all());
+});
+Route::get('/kolams', [KolamController::class, 'index']);
+
+
+
+
+
+
 

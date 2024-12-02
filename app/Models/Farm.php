@@ -11,6 +11,7 @@ class Farm extends Model
 
     protected $fillable = [
         'name',
+        'kolam',
         'description',
         'user_id', // Pastikan user_id ada di tabel farms
     ];

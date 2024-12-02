@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('report_month'); // Bulan laporan
             $table->decimal('income', 10, 2); // Pendapatan
             $table->decimal('expenses', 10, 2); // Pengeluaran
-            $table->decimal('profit', 10, 2); // Laba
+            $table->decimal('profit', 10, 2)->nullable();
             $table->text('details')->nullable(); // Detail laporan
             $table->enum('status', ['draft', 'finalized'])->default('draft'); // Status laporan
             $table->timestamps(); // Kolom created_at & updated_at

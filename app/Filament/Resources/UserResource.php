@@ -2,16 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\UserResource\RelationManagers;
 
 class UserResource extends Resource
 {
@@ -51,8 +53,23 @@ class UserResource extends Resource
                     'employee' => 'Employee',
                 ])
                 ->required(),
+                Forms\Components\TextInput::make('phone_number')
+    ->label('Phone Number')
+    ->required() // Wajib diisi
+    ->maxLength(15) // Maksimal 15 karakter untuk nomor telepon
+    ->numeric() // Hanya menerima angka
+    ->minLength(10), // Minimal 10 digit untuk nomor telepon
+
+                FileUpload::make('profile_picture')
+                ->label('Profile Picture')
+                ->image()
+                ->directory('profile_pictures') // Menyimpan file di dalam folder 'storage/app/profile_pictures'
+                ->disk('public') // Menyimpan file di disk 'public'
+                ->nullable(), // Agar tidak wajib diisi
+        
             
             ]);
+            
     }
 
     public static function table(Table $table): Table
@@ -70,6 +87,15 @@ class UserResource extends Resource
             Tables\Columns\TextColumn::make('role')
                 ->label('Role')
                 ->sortable(),
+                Tables\Columns\TextColumn::make('phone_number')
+    ->label('Phone Number')
+    ->sortable()
+    ->searchable(),
+
+            ImageColumn::make('profile_picture') // Menampilkan gambar profil
+                ->label('Profile Picture')
+                ->width(50)
+                ->height(50),
             Tables\Columns\TextColumn::make('created_at')
                 ->label('Created At')
                 ->dateTime(),

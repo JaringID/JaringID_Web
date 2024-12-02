@@ -30,6 +30,9 @@ class FarmResource extends Resource
                 ->label('Nama Tambak')
                 ->required()
                 ->maxLength(255),
+                Forms\Components\TextInput::make('kolam')
+                ->label('Kolam')
+                ->required(),
             Forms\Components\TextArea::make('description')
                 ->label('Deskripsi Tambak')
                 ->nullable()
@@ -49,6 +52,9 @@ class FarmResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                 ->label('Nama Tambak')
                 ->searchable(),
+                Tables\Columns\TextColumn::make('kolam')
+                ->label('Kolam')
+                ->sortable(),
             Tables\Columns\TextColumn::make('description')
                 ->label('Deskripsi Tambak')
                 ->limit(50), // Membatasi panjang deskripsi yang ditampilkan

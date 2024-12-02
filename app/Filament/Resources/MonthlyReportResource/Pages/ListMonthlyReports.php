@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListMonthlyReports extends ListRecords
 {
     protected static string $resource = MonthlyReportResource::class;
+    protected static ?string $navigationLabel = "Laporan Bulanan";
 
     protected function getHeaderActions(): array
     {

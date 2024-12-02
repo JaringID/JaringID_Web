@@ -16,32 +16,36 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
-    {
-        // Validasi input
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        throw ValidationException::withMessages([
+            'email' => ['Email atau password tidak sesuai.'],
         ]);
-
-        // Cari user berdasarkan email
-        $user = User::where('email', $request->email)->first();
-
-        // Validasi user dan password
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Email atau password tidak sesuai.'],
-            ]);
-        }
-
-        // Buat token autentikasi
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        // Kembalikan token dalam response
-        return response()->json([
-            'message' => 'Login berhasil',
-            'token' => $token,
-        ], 200);
     }
+
+    // Validasi role
+    if ($user->role !== 'employee' && $user->role !== 'farm_manager') {
+        return response()->json([
+            'message' => 'Akses tidak diizinkan untuk role ini.',
+        ], 403);
+    }
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Login berhasil',
+        'token' => $token,
+        'user' => $user,
+    ], 200);
+}
+
 
     /**
      * Handle user registration.
@@ -73,4 +77,6 @@ class AuthController extends Controller
             'user' => $user,
         ], 201);
     }
+
+
 }

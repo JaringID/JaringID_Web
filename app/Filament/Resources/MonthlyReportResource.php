@@ -38,7 +38,6 @@ class MonthlyReportResource extends Resource
             Forms\Components\TextInput::make('expenses')->numeric()
             ->label('Pengeluaran')
             ->required(),
-            Forms\Components\TextInput::make('profit')->numeric()->required(),
             Forms\Components\Textarea::make('details')
             ->label('Rincian')
             ,
@@ -56,7 +55,7 @@ class MonthlyReportResource extends Resource
             Tables\Columns\TextColumn::make('farm.name')->label('Farm Name'),
             Tables\Columns\TextColumn::make('report_month')->date(),
             Tables\Columns\TextColumn::make('income')->money('IDR'),
-            Tables\Columns\TextColumn::make('profit')->money('IDR'),
+          
             Tables\Columns\BadgeColumn::make('status')->colors([
                 'success' => 'finalized',
                 'warning' => 'draft',

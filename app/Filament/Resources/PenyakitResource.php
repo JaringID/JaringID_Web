@@ -34,7 +34,7 @@ class PenyakitResource extends Resource
                     FileUpload::make('image')
                     ->image() // Menandakan bahwa ini file gambar
                     ->disk('public') // Disk penyimpanan (sesuai konfigurasi di config/filesystems.php)
-                    ->directory('penyakit-images') // Folder penyimpanan
+                    ->directory('/penyakit-images') // Folder penyimpanan
                     ->label('Foto Penyakit')
                     ->required(),
                 Textarea::make('deskripsi')
@@ -47,8 +47,14 @@ class PenyakitResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nama')->label('Nama Penyakit'),
-                ImageColumn::make('image')->label('Foto Penyakit')
-                    ->getStateUsing(fn($record) => $record->image_url),
+                ImageColumn::make('image')
+    ->label('Foto Penyakit')
+    ->getStateUsing(fn($record) => $record->image ? url('storage/penyakit-images/' . $record->image) : null)
+    ->width(50)
+    ->height(50),
+
+
+
                 TextColumn::make('deskripsi')->label('Deskripsi')->limit(50),
             ])
             ->filters([])

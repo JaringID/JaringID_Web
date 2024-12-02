@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
+use App\Filament\Resources\UserResource\Pages\Register;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,5 +20,6 @@ Route::get('/', function () {
     return view('welcome');
     
 });
+
 
 
