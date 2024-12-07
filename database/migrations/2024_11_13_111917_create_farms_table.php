@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('kolam');
             $table->text('description')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             
             $table->timestamps();
         });

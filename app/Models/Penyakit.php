@@ -26,11 +26,11 @@ class Penyakit extends Model
     return $file->store('penyakit-images', 'public'); // Menyimpan gambar di disk 'public' dalam folder 'penyakit-images'
 }
 
-public function getImageAttribute($value)
+public function getImageUrlAttribute()
 {
-    // Cek apakah value ada dan sesuai
-    return $value ? url('storage/penyakit-images/' . $value) : null;
+    return $this->image ? asset('storage/' . $this->image) : null;
 }
+
 
 
 

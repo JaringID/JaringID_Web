@@ -29,4 +29,11 @@ class TambakController extends Controller
             'data' => $farm // Kembalikan data farm yang telah disimpan
         ], 201); // Status HTTP 201 Created
     }
+    public function index(Request $request)
+{
+    $user = $request->user(); // Mendapatkan pengguna yang sedang login
+    $tambak = Farm::where('user_id', $user->id)->get(); // Filter berdasarkan user_id
+    return response()->json($tambak);
+}
+
 }

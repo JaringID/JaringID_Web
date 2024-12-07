@@ -34,7 +34,14 @@ class FilamentServiceProvider extends ServiceProvider
             Filament::registerResources([
                 UserResource::class,
             ]);
-            
+            Filament::registerRenderHook(
+                'auth-check',
+                function () {
+                    if (!Auth::check()) {
+                        return redirect()->route('login');
+                    }
+                }
+            );
             
            
         });

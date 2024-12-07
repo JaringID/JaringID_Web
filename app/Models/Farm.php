@@ -25,6 +25,5 @@ class Farm extends Model
 {
     return $this->hasMany(Sales::class);
 }
-    
 }
 

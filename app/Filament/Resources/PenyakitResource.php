@@ -32,11 +32,13 @@ class PenyakitResource extends Resource
                     ->required()
                     ->label('Nama Penyakit'),
                     FileUpload::make('image')
-                    ->image() // Menandakan bahwa ini file gambar
-                    ->disk('public') // Disk penyimpanan (sesuai konfigurasi di config/filesystems.php)
-                    ->directory('/penyakit-images') // Folder penyimpanan
-                    ->label('Foto Penyakit')
-                    ->required(),
+    ->label('Foto Penyakit')
+    ->image()
+    ->directory('penyakit-images') // Folder penyimpanan
+    ->disk('public') // Pastikan menggunakan disk public
+    ->required(),
+
+
                 Textarea::make('deskripsi')
                     ->label('Deskripsi'),
             ]);
@@ -49,12 +51,9 @@ class PenyakitResource extends Resource
                 TextColumn::make('nama')->label('Nama Penyakit'),
                 ImageColumn::make('image')
     ->label('Foto Penyakit')
-    ->getStateUsing(fn($record) => $record->image ? url('storage/penyakit-images/' . $record->image) : null)
+    ->getStateUsing(fn($record) => $record->image_url) // Menggunakan accessor
     ->width(50)
     ->height(50),
-
-
-
                 TextColumn::make('deskripsi')->label('Deskripsi')->limit(50),
             ])
             ->filters([])

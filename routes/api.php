@@ -18,7 +18,7 @@ use App\Http\Controllers\FeedScheduleController;
 |--------------------------------------------------------------------------|
 | API Routes                                                               |
 |--------------------------------------------------------------------------|
-| Here is where you can register API routes for your application. These    |
+| Here is where you can register API routes for your application. These    | 
 | routes are loaded by the RouteServiceProvider and all of them will       |
 | be assigned to the "api" middleware group. Make something great!         |
 |--------------------------------------------------------------------------|
@@ -34,8 +34,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Endpoint untuk mendapatkan data user yang sedang login
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return response()->json($request->user()); // Mengembalikan data user
 });
+
 
 // Rute login menggunakan controller AuthController
 Route::post('/login', [AuthController::class, 'login']);
@@ -46,14 +47,11 @@ Route::get('/penyakit', function () {
     return response()->json(Penyakit::all());
 });
 
-// Route::get('/profile', function () {
-//     return response()->json(User::all());
-// });
-Route::post('/tambak', [TambakController::class, 'store']);
+Route::post('/tambak', [TambakController::class, 'store'])->middleware('auth:sanctum');
 
-Route::get('/tambak', function () {
-    return response()->json(Farm::all());
-});
+
+Route::get('/tambak', [TambakController::class, 'index'])->middleware('auth:sanctum');
+
 
 Route::get('/reports', function () {
     return response()->json(MonthlyReport::all());

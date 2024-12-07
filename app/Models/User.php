@@ -23,7 +23,22 @@ class User extends Authenticatable
         'password',
         'role',
         'farm_id',
+        'profile_picture',
     ];
+    /**
+     * Mutator untuk memastikan path gambar tidak memiliki karakter tambahan.
+     *
+     * @param string|null $value
+     */
+    public function saveImage($file)
+{
+    return $file->store('profile_pictures', 'public'); // Menyimpan gambar di disk 'public' dalam folder 'penyakit-images'
+}
+
+public function getProfilePictureUrlAttribute()
+{
+    return asset('storage/' . $this->profile_picture);
+}
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,5 +64,13 @@ class User extends Authenticatable
         return $this->belongsTo(Farm::class);
     }
 
-    
+    protected static function boot()
+{
+    parent::boot();
+
+    static::creating(function ($user) {
+        $user->profile_picture = null; // Pastikan defaultnya null
+    });
+}
+
 }
