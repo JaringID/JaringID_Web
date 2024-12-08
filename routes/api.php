@@ -42,7 +42,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Rute login menggunakan controller AuthController
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('api-register', [AuthController::class, 'register']);
+Route::post('/api-register', [AuthController::class, 'register']);
 
 Route::get('/penyakit', function () {
     return response()->json(Penyakit::all());

@@ -59,10 +59,8 @@ class AuthController extends Controller
             'phone_number' => 'required|string|max:15',
             'email' => 'required|email|unique:users,email|max:255',
             'password' => 'required|min:8|confirmed',
-            'role' => 'required|in:owner,technician,worker',
+            'role' => 'required|in:owner,employee,technician',
         ]);
-
-        $rememberToken = bin2hex(random_bytes(64));
 
         $user = User::create([
             'name' => $request->name,
@@ -70,7 +68,6 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'remember_token' => $rememberToken,
         ]);
 
         return response()->json([
