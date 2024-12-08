@@ -11,7 +11,6 @@ class Farm extends Model
 
     protected $fillable = [
         'name',
-        'kolam',
         'description',
         'user_id', // Pastikan user_id ada di tabel farms
     ];
@@ -25,5 +24,9 @@ class Farm extends Model
 {
     return $this->hasMany(Sales::class);
 }
+public function kolams()
+    {
+        return $this->hasMany(Kolam::class, 'farm_id');
+    }
 }
 
