@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Rute login menggunakan controller AuthController
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('api-register', [AuthController::class, 'register']);
 
 Route::get('/penyakit', function () {
     return response()->json(Penyakit::all());
@@ -57,10 +57,3 @@ Route::get('/reports', function () {
     return response()->json(MonthlyReport::all());
 });
 Route::get('/kolams', [KolamController::class, 'index']);
-
-
-
-
-
-
-

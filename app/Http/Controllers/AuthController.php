@@ -16,35 +16,34 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
-
-    $user = User::where('email', $request->email)->first();
-
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        throw ValidationException::withMessages([
-            'email' => ['Email atau password tidak sesuai.'],
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
-    }
 
-    // Validasi role
-    if ($user->role !== 'employee' && $user->role !== 'farm_manager') {
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['Email atau password tidak sesuai.'],
+            ]);
+        }
+
+        if (!in_array($user->role, ['employee', 'farm_manager', 'owner', 'technician'])) {
+            return response()->json([
+                'message' => 'Akses tidak diizinkan untuk role ini.',
+            ], 403);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
-            'message' => 'Akses tidak diizinkan untuk role ini.',
-        ], 403);
+            'message' => 'Login berhasil',
+            'token' => $token,
+            'user' => $user,
+        ], 200);
     }
-
-    $token = $user->createToken('auth_token')->plainTextToken;
-
-    return response()->json([
-        'message' => 'Login berhasil',
-        'token' => $token,
-        'user' => $user,
-    ], 200);
-}
 
 
     /**
@@ -55,28 +54,28 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        // Validasi input
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone_number' => 'required|numeric|digits_between:10,15',
-            'password' => 'required|string|min:6|confirmed',
+            'phone_number' => 'required|string|max:15',
+            'email' => 'required|email|unique:users,email|max:255',
+            'password' => 'required|min:8|confirmed',
+            'role' => 'required|in:owner,technician,worker',
         ]);
 
-        // Buat user baru
+        $rememberToken = bin2hex(random_bytes(64));
+
         $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone_number' => $validated['phone_number'],
-            'password' => bcrypt($validated['password']),
+            'name' => $request->name,
+            'phone_number' => $request->phone_number,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'remember_token' => $rememberToken,
         ]);
 
-        // Kembalikan respons berhasil
         return response()->json([
-            'message' => 'Registrasi berhasil',
+            'message' => 'Akun berhasil dibuat!',
             'user' => $user,
         ], 201);
     }
-
-
 }

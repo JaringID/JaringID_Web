@@ -19,6 +19,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'phone_number',
         'email',
         'password',
         'role',
@@ -31,14 +32,14 @@ class User extends Authenticatable
      * @param string|null $value
      */
     public function saveImage($file)
-{
-    return $file->store('profile_pictures', 'public'); // Menyimpan gambar di disk 'public' dalam folder 'penyakit-images'
-}
+    {
+        return $file->store('profile_pictures', 'public'); // Menyimpan gambar di disk 'public' dalam folder 'penyakit-images'
+    }
 
-public function getProfilePictureUrlAttribute()
-{
-    return asset('storage/' . $this->profile_picture);
-}
+    public function getProfilePictureUrlAttribute()
+    {
+        return asset('storage/' . $this->profile_picture);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -65,12 +66,11 @@ public function getProfilePictureUrlAttribute()
     }
 
     protected static function boot()
-{
-    parent::boot();
+    {
+        parent::boot();
 
-    static::creating(function ($user) {
-        $user->profile_picture = null; // Pastikan defaultnya null
-    });
-}
-
+        static::creating(function ($user) {
+            $user->profile_picture = null; // Pastikan defaultnya null
+        });
+    }
 }

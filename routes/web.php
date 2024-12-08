@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckRole;
 use App\Filament\Resources\UserResource\Pages\Register;
+use App\Http\Controllers\AuthController;
 
 
 /*
@@ -18,8 +19,7 @@ use App\Filament\Resources\UserResource\Pages\Register;
 
 Route::get('/', function () {
     return view('welcome');
-    
 });
 
-
-
+Route::get('/web-register', [AuthController::class, 'showRegisterForm'])->name('web.register');
+Route::post('/web-register', [AuthController::class, 'register'])->name('web.register.process');
