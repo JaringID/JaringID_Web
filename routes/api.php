@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TambakController;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\FeedScheduleController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------|
@@ -57,3 +58,11 @@ Route::get('/reports', function () {
     return response()->json(MonthlyReport::all());
 });
 Route::get('/kolams', [KolamController::class, 'index']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Endpoint untuk user yang sedang login
+    Route::get('/user/profile', [UserController::class, 'showProfile']);
+
+    // Endpoint untuk melihat profil user berdasarkan ID (opsional)
+    Route::get('/user/profile/{id}', [UserController::class, 'showProfile']);
+});
