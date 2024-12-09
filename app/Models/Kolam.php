@@ -15,10 +15,25 @@ class Kolam extends Model
         'tipe_kolam',
         'panjang_kolam',
         'lebar_kolam',
+        'keliling_kolam',
         'diameter_kolam',
         'kedalaman_kolam',
         'farm_id',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Hitung keliling kolam sebelum data disimpan
+        static::saving(function ($kolam) {
+            if ($kolam->tipe_kolam === 'kotak' && $kolam->panjang_kolam && $kolam->lebar_kolam) {
+                $kolam->keliling_kolam = (2 * $kolam->panjang_kolam) + (2 * $kolam->lebar_kolam);
+            } else {
+                $kolam->keliling_kolam = null;
+            }
+        });
+    }
 
     public function user() // Singular, karena satu farm hanya dimiliki oleh satu user
     {

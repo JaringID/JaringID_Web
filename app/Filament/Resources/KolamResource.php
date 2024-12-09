@@ -41,15 +41,29 @@ class KolamResource extends Resource
                     ->required()
                     ->reactive(),
 
-                Forms\Components\TextInput::make('panjang_kolam')
+                    Forms\Components\TextInput::make('panjang_kolam')
                     ->label('Panjang Kolam (m)')
                     ->numeric()
-                    ->visible(fn ($get) => $get('tipe_kolam') === 'kotak'),
-
+                    ->visible(fn ($get) => $get('tipe_kolam') === 'kotak')
+                    ->reactive()
+                    ->afterStateUpdated(fn (callable $set, callable $get) => self::updateKelilingKolam($set, $get)),
+    
                 Forms\Components\TextInput::make('lebar_kolam')
                     ->label('Lebar Kolam (m)')
                     ->numeric()
-                    ->visible(fn ($get) => $get('tipe_kolam') === 'kotak'),
+                    ->visible(fn ($get) => $get('tipe_kolam') === 'kotak')
+                    ->reactive()
+                    ->afterStateUpdated(fn (callable $set, callable $get) => self::updateKelilingKolam($set, $get)),
+    
+                Forms\Components\TextInput::make('keliling_kolam')
+                    ->label('Keliling Kolam (m)')
+                    ->numeric()
+                    ->visible(fn ($get) => $get('tipe_kolam') === 'kotak')
+                    ->disabled()
+                    ->reactive(),
+                    
+
+    
 
                 Forms\Components\TextInput::make('diameter_kolam')
                     ->label('Diameter Kolam (m)')
@@ -62,6 +76,18 @@ class KolamResource extends Resource
                     ->required(),
             ]);
     }
+    protected static function updateKelilingKolam(callable $set, callable $get)
+    {
+        $panjang = $get('panjang_kolam');
+        $lebar = $get('lebar_kolam');
+
+        if ($panjang && $lebar) {
+            $keliling = (2 * $panjang) + (2 * $lebar);
+            $set('keliling_kolam', $keliling);
+        } else {
+            $set('keliling_kolam', 0);
+        }
+    }
 
     public static function table(Table $table): Table
     {
@@ -73,6 +99,7 @@ class KolamResource extends Resource
             Tables\Columns\TextColumn::make('tipe_kolam')->label('Tipe Kolam'),
             Tables\Columns\TextColumn::make('panjang_kolam')->label('Panjang Kolam'),
             Tables\Columns\TextColumn::make('lebar_kolam')->label('Lebar Kolam'),
+            Tables\Columns\TextColumn::make('keliling_kolam')->label('Keliling Kolam'),
             Tables\Columns\TextColumn::make('diameter_kolam')->label('Diameter Kolam'),
             Tables\Columns\TextColumn::make('kedalaman_kolam')->label('Kedalaman (m)'),
         ])
