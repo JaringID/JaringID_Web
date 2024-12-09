@@ -12,6 +12,7 @@ class TambakController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'kolam' => 'nullable|integer|min:0',
+            'lokasi' => 'required|string',
             'description' => 'nullable|string', // Pastikan ini nullable jika tidak wajib
         ]);
 
@@ -19,6 +20,7 @@ class TambakController extends Controller
         $farm = new Farm(); // Gunakan model Farm di sini
         $farm->name = $validated['name'];
         $farm->kolam = $validated['kolam'];
+        $farm->lokasi = $validated['lokasi'];
         $farm->description = $validated['description'] ?? ''; // Jika tidak ada deskripsi, isi dengan string kosong
         $farm->user_id = auth()->user()->id; // Menetapkan user_id sesuai user yang sedang login
         $farm->save();

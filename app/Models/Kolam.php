@@ -10,6 +10,7 @@ class Kolam extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'nama_kolam',
         'tipe_kolam',
         'panjang_kolam',
@@ -18,6 +19,11 @@ class Kolam extends Model
         'kedalaman_kolam',
         'farm_id',
     ];
+
+    public function user() // Singular, karena satu farm hanya dimiliki oleh satu user
+    {
+        return $this->belongsTo(User::class); // Relasi belongsTo ke model User
+    }
 
     public function farm()
     {

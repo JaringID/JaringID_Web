@@ -25,7 +25,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         Filament::serving(function () {
             // Hanya izinkan pengguna dengan role 'owner' untuk mengakses dashboard Filament
-            if (Auth::check() && Auth::user()->role !== 'owner' && Auth::user()->role !== 'farm_manager' ) {
+            if (Auth::check() && Auth::user()->role !== 'owner' && Auth::user()->role !== 'farm_manager' && Auth::user()->role !== 'technician' && Auth::user()->role !== 'employee') {
                 abort(403, 'Akses Ditolak Wak');
             }
             Filament::registerWidgets([

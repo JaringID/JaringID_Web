@@ -27,6 +27,10 @@ class FarmResource extends Resource
                     ->label('Nama Tambak')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextArea::make('lokasi')
+                    ->label('Lokasi Tambak')
+                    ->required()
+                    ->maxLength(1000),
                 Forms\Components\TextArea::make('description')
                     ->label('Deskripsi Tambak')
                     ->nullable()
@@ -53,6 +57,9 @@ class FarmResource extends Resource
                     ->getStateUsing(function ($record) {
                         return $record->kolams->count();
                     }),
+                Tables\Columns\TextColumn::make('lokasi')
+                    ->label('Lokasi Tambak')
+                    ->limit(50), 
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi Tambak')
                     ->limit(50), // Membatasi panjang teks deskripsi

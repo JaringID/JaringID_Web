@@ -57,7 +57,9 @@ Route::get('/tambak', [TambakController::class, 'index'])->middleware('auth:sanc
 Route::get('/reports', function () {
     return response()->json(MonthlyReport::all());
 });
-Route::get('/kolams', [KolamController::class, 'index']);
+Route::middleware('auth')->group(function () {
+    Route::get('/kolam', [KolamController::class, 'index']);
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     // Endpoint untuk user yang sedang login

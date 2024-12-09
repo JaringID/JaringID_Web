@@ -95,6 +95,14 @@ class KolamResource extends Resource
             //
         ];
     }
+    public static function getEloquentQuery(): Builder
+{
+    // Membatasi data hanya untuk kolam milik user yang sedang login
+    return parent::getEloquentQuery()->whereHas('farm', function ($query) {
+        $query->where('user_id', auth()->id());
+    });
+}
+
 
     public static function getPages(): array
     {

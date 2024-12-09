@@ -21,5 +21,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Route::get('/admin', function () {
+//     return view('admin');
+// });
+
 Route::get('/web-register', [AuthController::class, 'showRegisterForm'])->name('web.register');
 Route::post('/web-register', [AuthController::class, 'register'])->name('web.register.process');
