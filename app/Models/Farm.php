@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Siklus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Farm extends Model
 {
@@ -28,6 +29,10 @@ class Farm extends Model
 public function kolams()
     {
         return $this->hasMany(Kolam::class, 'farm_id');
+    }
+    public function siklus()
+    {
+        return $this->hasMany(Siklus::class, 'siklus_id');
     }
 }
 

@@ -33,6 +33,10 @@ class Kolam extends Model
 {
     return $this->hasMany(Kolam::class);
 }
+    public function siklus()
+{
+    return $this->hasMany(Siklus::class);
+}
 
 }
 

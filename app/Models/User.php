@@ -64,6 +64,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Farm::class);
     }
+    public function siklus()
+    {
+        return $this->hasMany(Siklus::class);
+    }
 
     protected static function boot()
     {
