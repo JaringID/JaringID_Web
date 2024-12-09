@@ -11,7 +11,7 @@ class TambakController extends Controller
         // Validasi data yang masuk
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'kolam' => 'required|integer|min:1',
+            'kolam' => 'nullable|integer|min:0',
             'description' => 'nullable|string', // Pastikan ini nullable jika tidak wajib
         ]);
 
