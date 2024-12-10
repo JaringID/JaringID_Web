@@ -65,11 +65,23 @@ class KolamController extends Controller
     // Validasi data yang dikirim
     $request->validate([
         'nama_kolam' => 'required|string|max:255',
+        'tipe_kolam' => 'required|in:kotak,bulat',
+        'kedalaman_kolam' => 'required|numeric',
+        'panjang_kolam' => 'required_if:tipe_kolam,kotak|nullable|numeric',
+        'lebar_kolam' => 'required_if:tipe_kolam,kotak|nullable|numeric',
+        'keliling_kolam' => 'nullable|numeric',
+        'diameter_kolam' => 'required_if:tipe_kolam,bulat|nullable|numeric',
         // Tambahkan validasi lain sesuai dengan kebutuhan
     ]);
 
     // Update data kolam
     $kolam->nama_kolam = $request->input('nama_kolam');
+    $kolam->tipe_kolam = $request->input('tipe_kolam');
+    $kolam->kedalaman_kolam = $request->input('kedalaman_kolam');
+    $kolam->panjang_kolam = $request->input('panjang_kolam');
+    $kolam->lebar_kolam = $request->input('lebar_kolam');
+    $kolam->keliling_kolam = $request->input('keliling_kolam');
+    $kolam->diameter_kolam = $request->input('diameter_kolam');
     // Perbarui atribut lainnya jika diperlukan
     $kolam->save();
 
