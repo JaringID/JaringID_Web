@@ -63,6 +63,12 @@ Route::get('/kolam', function () {
     return response()->json(Kolam::all());
 })->middleware('auth:sanctum');
     Route::post('/kolam', [KolamController::class, 'store'])->middleware('auth:sanctum');
+ // Rute untuk mengedit kolam (menggunakan metode PUT)
+ Route::put('/kolam/{id}', [KolamController::class, 'update']);
+    
+ // Rute untuk menghapus kolam (menggunakan metode DELETE)
+ Route::delete('/kolam/{id}', [KolamController::class, 'destroy']);
+
 
 
 Route::middleware('auth:sanctum')->group(function () {

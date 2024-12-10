@@ -55,4 +55,38 @@ class KolamController extends Controller
             'data' => $kolam
         ], 201);
     }
+    public function update(Request $request, $id)
+{
+    $kolam = Kolam::find($id);
+    if (!$kolam) {
+        return response()->json(['message' => 'Kolam not found'], 404);
+    }
+
+    // Validasi data yang dikirim
+    $request->validate([
+        'nama_kolam' => 'required|string|max:255',
+        // Tambahkan validasi lain sesuai dengan kebutuhan
+    ]);
+
+    // Update data kolam
+    $kolam->nama_kolam = $request->input('nama_kolam');
+    // Perbarui atribut lainnya jika diperlukan
+    $kolam->save();
+
+    return response()->json(['message' => 'Kolam updated successfully', 'kolam' => $kolam]);
+}
+public function destroy($id)
+{
+    $kolam = Kolam::find($id);
+    if (!$kolam) {
+        return response()->json(['message' => 'Kolam not found'], 404);
+    }
+
+    // Hapus kolam
+    $kolam->delete();
+
+    return response()->json(['message' => 'Kolam deleted successfully']);
+}
+
+
 }
