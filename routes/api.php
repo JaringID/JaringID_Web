@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Farm;
+use App\Models\Kolam;
 use App\Models\User;
 use App\Models\Penyakit;
 use Illuminate\Http\Request;
@@ -57,9 +58,12 @@ Route::get('/tambak', [TambakController::class, 'index'])->middleware('auth:sanc
 Route::get('/reports', function () {
     return response()->json(MonthlyReport::all());
 });
-Route::middleware('auth')->group(function () {
-    Route::get('/kolam', [KolamController::class, 'index']);
-});
+
+Route::get('/kolam', function () {
+    return response()->json(Kolam::all());
+})->middleware('auth:sanctum');
+    Route::post('/kolam', [KolamController::class, 'store'])->middleware('auth:sanctum');
+
 
 Route::middleware('auth:sanctum')->group(function () {
     // Endpoint untuk user yang sedang login

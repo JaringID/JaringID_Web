@@ -10,15 +10,14 @@ class Kolam extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'nama_kolam',
         'tipe_kolam',
+        'kedalaman_kolam',
         'panjang_kolam',
         'lebar_kolam',
         'keliling_kolam',
         'diameter_kolam',
-        'kedalaman_kolam',
-        'farm_id',
+        'farm_id'
     ];
 
     protected static function boot()
