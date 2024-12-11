@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SiklusResource\Pages;
@@ -13,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\BadgeColumn;
 
 class SiklusResource extends Resource
 {
@@ -24,30 +24,30 @@ class SiklusResource extends Resource
     public static function form(Forms\Form $form): Forms\Form
     {
         return $form
-            ->schema([
+            ->schema([ 
                 Card::make()->schema([
                     Select::make('farm_id')
                         ->label('Farm')
-                        ->relationship('farm', 'name') // Sesuaikan dengan relasi di model Farm
+                        ->relationship('farm', 'name') 
                         ->required(),
 
                     Select::make('user_id')
                         ->label('User')
-                        ->relationship('user', 'name') // Sesuaikan dengan relasi di model User
+                        ->relationship('user', 'name')
                         ->required(),
 
                     Select::make('kolam_id')
                         ->label('Kolam')
-                        ->relationship('kolam', 'nama_kolam') // Sesuaikan dengan relasi di model Kolam
+                        ->relationship('kolam', 'nama_kolam')
                         ->required(),
 
-                    TextInput::make('total_lebar')
-                        ->label('Total Lebar')
+                    TextInput::make('total_tebar')
+                        ->label('Total Tebar')
                         ->numeric()
                         ->required(),
 
-                    Select::make('tipe_lebar')
-                        ->label('Tipe Lebar')
+                    Select::make('tipe_tebar')
+                        ->label('Tipe Tebar')
                         ->options([
                             'netto' => 'Netto',
                             'bruto' => 'Bruto',
@@ -58,32 +58,7 @@ class SiklusResource extends Resource
                     DatePicker::make('tanggal_tebar')
                         ->label('Tanggal Tebar')
                         ->required(),
-
-                    TextInput::make('total_pakan')
-                        ->label('Total Pakan')
-                        ->numeric()
-                        ->required(),
-
-                    TextInput::make('biaya_pakan')
-                        ->label('Biaya Pakan')
-                        ->numeric()
-                        ->required(),
-
-                    TextInput::make('total_bibit')
-                        ->label('Total Bibit')
-                        ->numeric()
-                        ->required(),
-
-                    TextInput::make('biaya_bibit')
-                        ->label('Biaya Bibit')
-                        ->numeric()
-                        ->required(),
-
-                    TextInput::make('biaya_perawatan')
-                        ->label('Biaya Perawatan')
-                        ->numeric()
-                        ->nullable(),
-                ]),
+                ]), 
             ]);
     }
 
@@ -106,12 +81,8 @@ class SiklusResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('total_lebar')
-                    ->label('Total Lebar')
-                    ->sortable(),
-
-                TextColumn::make('tipe_lebar')
-                    ->label('Tipe Lebar')
+                TextColumn::make('total_tebar')
+                    ->label('Total Tebar')
                     ->sortable(),
 
                 TextColumn::make('tanggal_tebar')
@@ -119,30 +90,28 @@ class SiklusResource extends Resource
                     ->date()
                     ->sortable(),
 
-                TextColumn::make('total_pakan')
-                    ->label('Total Pakan')
-                    ->sortable(),
+                BadgeColumn::make('status')
+                    ->label('Status')
+                    ->getStateUsing(function ($record) {
+                        // Cek status berdasarkan hasil panen
+                        $hasilPanen = $record->hasilPanens()->latest()->first();
+                        if ($hasilPanen) {
+                            if ($hasilPanen->jenis_panen == 'Total') {
+                                return 'Selesai';
+                            } elseif ($hasilPanen->jenis_panen == 'Parsial') {
+                                return 'Sedang Berjalan';
+                            } elseif ($hasilPanen->jenis_panen == 'Gagal') {
+                                return 'Berhenti';
+                            }
+                        }
 
-                TextColumn::make('biaya_pakan')
-                    ->label('Biaya Pakan')
-                    ->money('IDR', true) // Menampilkan dalam format uang
-                    ->sortable(),
-
-                TextColumn::make('total_bibit')
-                    ->label('Total Bibit')
-                    ->sortable(),
-
-                TextColumn::make('biaya_bibit')
-                    ->label('Biaya Bibit')
-                    ->money('IDR', true)
-                    ->sortable(),
-                    
-                    TextColumn::make('biaya_perawatan')
-                    ->label('Biaya Perawatan')
-                    ->money('IDR', true)
-                    ->default('N/A') // Menampilkan "N/A" jika nilai null
-                    ->sortable(),
-                
+                        return 'Sedang Berjalan'; // Default status jika tidak ada hasil panen
+                    })
+                    ->colors([
+                        'success' => 'Selesai',
+                        'warning' => 'Sedang Berjalan',
+                        'danger' => 'Berhenti',
+                    ]),
             ])
             ->filters([
                 // Tambahkan filter jika diperlukan

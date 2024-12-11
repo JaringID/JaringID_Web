@@ -17,14 +17,10 @@ class Siklus extends Model
         'farm_id',
         'user_id',
         'kolam_id',
-        'total_lebar',
-        'tipe_lebar',
+        'total_tebar',
+        'tipe_tebar',
         'tanggal_tebar',
-        'total_pakan',
-        'biaya_pakan',
-        'total_bibit',
-        'biaya_bibit',
-        'biaya_perawatan',
+        'status',
     ];
 
     /**
@@ -49,5 +45,14 @@ class Siklus extends Model
     public function kolam()
     {
         return $this->belongsTo(Kolam::class);
+    }
+
+    /**
+     * Relasi ke model `HasilPanen` untuk data hasil panen dari siklus ini.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function hasilPanens()
+    {
+        return $this->hasMany(HasilPanen::class, 'siklus_id');
     }
 }
