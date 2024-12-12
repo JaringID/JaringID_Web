@@ -2,19 +2,20 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\HasilPanenResource\Pages;
-use App\Models\HasilPanen;
 use Filament\Forms;
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Columns\TextColumn;
+use App\Models\Siklus;
+use App\Models\HasilPanen;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\HasilPanenResource\Pages;
 
 class HasilPanenResource extends Resource
 {
@@ -51,16 +52,29 @@ class HasilPanenResource extends Resource
                         ->label('Tanggal Panen')
                         ->required(),
 
-                    Select::make('jenis_panen')
+                        Select::make('jenis_panen')
                         ->label('Jenis Panen')
                         ->options([
-                            'Total' => 'Total',
-                            'Parsial' => 'Parsial',
-                            'Gagal' => 'Gagal',
+                            'parsial' => 'Parsial',
+                            'total' => 'Total',
+                            'gagal' => 'Gagal',
                         ])
-                        ->required()
-                        ->reactive() // Menambahkan reaktivitas pada jenis panen
-                        ->afterStateUpdated(fn ($state, callable $set) => self::updateTotalHarga($set)),
+                        ->reactive()
+                        ->afterStateUpdated(function ($state, callable $get) {
+                            $siklus = Siklus::find($get('siklus_id'));
+    
+                            if ($siklus) {
+                                $kolam = $siklus->kolam;
+    
+                                if (in_array($state, ['total', 'gagal'])) {
+                                    $siklus->update(['status_siklus' => 'berhenti']);
+                                    $kolam->update(['status' => 'tidak_aktif']);
+                                } elseif ($state === 'parsial') {
+                                    $siklus->update(['status_siklus' => 'sedang_berjalan']);
+                                    $kolam->update(['status' => 'aktif']);
+                                }
+                            }
+                        }),
 
                     TextInput::make('total_berat')
                         ->label('Total Berat (Kg)')
@@ -79,7 +93,8 @@ class HasilPanenResource extends Resource
                     TextInput::make('total_harga')
                         ->label('Total Harga (Rp)')
                         ->numeric()
-                        ->disabled(),
+                        ->disabled()
+                        ->reactive(),
 
                     TextInput::make('pembeli')
                         ->label('Pembeli')

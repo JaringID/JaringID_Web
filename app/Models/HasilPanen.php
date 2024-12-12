@@ -33,38 +33,22 @@ class HasilPanen extends Model
         'pembeli',
         'catatan',
     ];
-    public static function boot()
+    protected static function boot()
     {
         parent::boot();
-    
-        static::saving(function ($model) {
-            if ($model->total_berat && $model->harga_per_kg) {
-                // Periksa jenis panen
-                if ($model->jenis_panen == 'Parsial') {
-                    // Jika jenis panen Parsial, hitung dengan pengurangan (misal 0.75)
-                    $model->total_harga = $model->total_berat * $model->harga_per_kg; // Ganti 0.75 dengan faktor yang sesuai
-                } else {
-                    // Jika jenis panen Total atau Gagal, hitung harga tanpa pengurangan
-                    $model->total_harga = $model->total_berat * $model->harga_per_kg;
-                }
-            }
-            if ($model->jenis_panen) {
-                $status = 'sedang_berjalan'; // default
 
-                if ($model->jenis_panen == 'total') {
-                    $status = 'selesai';
-                } elseif ($model->jenis_panen == 'gagal') {
-                    $status = 'berhenti';
-                }
-
-                // Update status di siklus terkait
-                $model->siklus->update(['status' => $status]);
+        static::saved(function ($model) {
+            // Perbarui status Siklus dan Kolam berdasarkan jenis panen
+            if ($model->jenis_panen === 'total' || $model->jenis_panen === 'gagal') {
+                $model->siklus->update(['status_siklus' => 'berhenti']);
+                $model->kolam->update(['status' => 'tidak_aktif']);
+            } elseif ($model->jenis_panen === 'parsial') {
+                $model->siklus->update(['status_siklus' => 'sedang_berjalan']);
+                $model->kolam->update(['status' => 'aktif']);
             }
-        
         });
-
-        
     }
+
     
 
 

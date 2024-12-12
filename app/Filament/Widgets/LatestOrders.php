@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\Builder;
  
 class LatestOrders extends BaseWidget
 {
+    public function getHeading(): string
+    {
+        return 'Daftar Tambak';
+    }
     protected function getTableQuery(): Builder
     {
         return Farm::query()->latest();

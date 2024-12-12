@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\BadgeColumn;
+use App\Models\Kolam;
 
 class SiklusResource extends Resource
 {
@@ -36,10 +37,16 @@ class SiklusResource extends Resource
                         ->relationship('user', 'name')
                         ->required(),
 
-                    Select::make('kolam_id')
+                        Select::make('kolam_id')
                         ->label('Kolam')
                         ->relationship('kolam', 'nama_kolam')
-                        ->required(),
+                        ->required()
+                        ->afterStateUpdated(function ($state) {
+                            $kolam = Kolam::find($state);
+                            if ($kolam) {
+                                $kolam->update(['status' => 'aktif']);
+                            }
+                        }),
 
                     TextInput::make('total_tebar')
                         ->label('Total Tebar')
@@ -58,7 +65,7 @@ class SiklusResource extends Resource
                     DatePicker::make('tanggal_tebar')
                         ->label('Tanggal Tebar')
                         ->required(),
-                ]), 
+                ]),
             ]);
     }
 
@@ -90,27 +97,25 @@ class SiklusResource extends Resource
                     ->date()
                     ->sortable(),
 
-                BadgeColumn::make('status')
+                    BadgeColumn::make('status')
                     ->label('Status')
                     ->getStateUsing(function ($record) {
-                        // Cek status berdasarkan hasil panen
-                        $hasilPanen = $record->hasilPanens()->latest()->first();
+                        // Cek apakah hasil panen tersedia
+                        $hasilPanen = $record->hasilPanen()->latest()->first();
+                
                         if ($hasilPanen) {
-                            if ($hasilPanen->jenis_panen == 'Total') {
-                                return 'Selesai';
-                            } elseif ($hasilPanen->jenis_panen == 'Parsial') {
-                                return 'Sedang Berjalan';
-                            } elseif ($hasilPanen->jenis_panen == 'Gagal') {
-                                return 'Berhenti';
-                            }
+                            return match ($hasilPanen->jenis_panen) {
+                                'Total' => 'Berhenti',
+                                'Parsial' => 'Sedang Berjalan',
+                                default => 'Sedang Berjalan',
+                            };
                         }
 
                         return 'Sedang Berjalan'; // Default status jika tidak ada hasil panen
                     })
                     ->colors([
-                        'success' => 'Selesai',
-                        'warning' => 'Sedang Berjalan',
-                        'danger' => 'Berhenti',
+                        'success' => 'Sedang Berjalan',
+                        'warning' => 'Berhenti',
                     ]),
             ])
             ->filters([

@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\BadgeColumn;
 
 class KolamResource extends Resource
 {
@@ -61,10 +62,7 @@ class KolamResource extends Resource
                     ->visible(fn ($get) => $get('tipe_kolam') === 'kotak')
                     ->disabled()
                     ->reactive(),
-                    
-
     
-
                 Forms\Components\TextInput::make('diameter_kolam')
                     ->label('Diameter Kolam (m)')
                     ->numeric()
@@ -74,7 +72,16 @@ class KolamResource extends Resource
                     ->label('Kedalaman Kolam (m)')
                     ->numeric()
                     ->required(),
+                    Forms\Components\Select::make('status')
+                    ->options([
+                        'belum_aktif' => 'Belum Aktif',
+                        'aktif' => 'Aktif',
+                        'tidak_aktif' => 'Tidak Aktif',
+                    ])
+                    ->default('belum_aktif')
+                    ->disabled(), // Status diubah otomatis melalui Siklus
             ]);
+            
     }
     protected static function updateKelilingKolam(callable $set, callable $get)
     {
@@ -92,17 +99,23 @@ class KolamResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-        ->columns([
-            // Tambahkan kolom tabel
-            Tables\Columns\TextColumn::make('nama_kolam')->label('Nama Kolam'),
-            Tables\Columns\TextColumn::make('farm.name')->label('Nama Tambak'),
-            Tables\Columns\TextColumn::make('tipe_kolam')->label('Tipe Kolam'),
-            Tables\Columns\TextColumn::make('panjang_kolam')->label('Panjang Kolam'),
-            Tables\Columns\TextColumn::make('lebar_kolam')->label('Lebar Kolam'),
-            Tables\Columns\TextColumn::make('keliling_kolam')->label('Keliling Kolam'),
-            Tables\Columns\TextColumn::make('diameter_kolam')->label('Diameter Kolam'),
-            Tables\Columns\TextColumn::make('kedalaman_kolam')->label('Kedalaman (m)'),
-        ])
+            ->columns([
+                Tables\Columns\TextColumn::make('nama_kolam')->label('Nama Kolam'),
+                Tables\Columns\TextColumn::make('farm.name')->label('Nama Tambak'),
+                Tables\Columns\TextColumn::make('tipe_kolam')->label('Tipe Kolam'),
+                Tables\Columns\TextColumn::make('panjang_kolam')->label('Panjang Kolam'),
+                Tables\Columns\TextColumn::make('lebar_kolam')->label('Lebar Kolam'),
+                Tables\Columns\TextColumn::make('keliling_kolam')->label('Keliling Kolam'),
+                Tables\Columns\TextColumn::make('diameter_kolam')->label('Diameter Kolam'),
+                Tables\Columns\TextColumn::make('kedalaman_kolam')->label('Kedalaman (m)'),
+                Tables\Columns\BadgeColumn::make('status')
+                ->label('Status')
+                ->colors([
+                    'aktif' => 'success', // Warna untuk parsial
+                    'belum_aktif' => 'warning',  // Warna untuk total
+                    'tidak_aktif' => 'danger',   // Warna untuk gagal
+                ])
+            ])
             ->filters([
                 //
             ])

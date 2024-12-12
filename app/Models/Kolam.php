@@ -17,7 +17,8 @@ class Kolam extends Model
         'lebar_kolam',
         'keliling_kolam',
         'diameter_kolam',
-        'farm_id'
+        'farm_id',
+        'status'
     ];
 
     protected static function boot()
@@ -51,6 +52,21 @@ class Kolam extends Model
 {
     return $this->hasMany(Siklus::class);
 }
+ // Mengubah status kolam menjadi aktif
+ public function setStatusAktif()
+ {
+     $this->update(['status' => 'aktif']);
+ }
+ public function setStatusTidakAktif()
+    {
+        $this->refresh();
+        $this->update(['status' => 'tidak_aktif']);
+    }
+public function hasilPanens()
+{
+    return $this->hasMany(HasilPanen::class, 'kolam_id');
+}
+
 
 }
 
