@@ -15,6 +15,7 @@ use App\Http\Controllers\TambakController;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\FeedScheduleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\KeuanganController;
 
 /*
 |--------------------------------------------------------------------------|
@@ -62,14 +63,14 @@ Route::get('/reports', function () {
 Route::get('/kolam', function () {
     return response()->json(Kolam::all());
 })->middleware('auth:sanctum');
-    Route::post('/kolam', [KolamController::class, 'store'])->middleware('auth:sanctum');
- // Rute untuk mengedit kolam (menggunakan metode PUT)
- Route::put('/kolam/{id}', [KolamController::class, 'update']);
-    
- // Rute untuk menghapus kolam (menggunakan metode DELETE)
- Route::delete('/kolam/{id}', [KolamController::class, 'destroy']);
+Route::post('/kolam', [KolamController::class, 'store'])->middleware('auth:sanctum');
+// Rute untuk mengedit kolam (menggunakan metode PUT)
+Route::put('/kolam/{id}', [KolamController::class, 'update']);
 
+// Rute untuk menghapus kolam (menggunakan metode DELETE)
+Route::delete('/kolam/{id}', [KolamController::class, 'destroy']);
 
+Route::middleware('auth:sanctum')->get('/getuser', [UserController::class, 'getUser']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Endpoint untuk user yang sedang login
@@ -78,3 +79,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Endpoint untuk melihat profil user berdasarkan ID (opsional)
     Route::get('/user/profile/{id}', [UserController::class, 'showProfile']);
 });
+
+Route::post('/keuangan/saldo', [KeuanganController::class, 'catatSaldo']);
+Route::post('/keuangan/pendapatan', [KeuanganController::class, 'catatPendapatan']);
+Route::post('/keuangan/pengeluaran', [KeuanganController::class, 'storePengeluaran']);
+Route::post('/keuangan/laporan', [KeuanganController::class, 'generateLaporanKeuangan']);
+
+Route::middleware('auth:sanctum')->get('/farms', [TambakController::class, 'getUserTambaks']);

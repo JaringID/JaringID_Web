@@ -23,16 +23,31 @@ class Farm extends Model
         return $this->belongsTo(User::class); // Relasi belongsTo ke model User
     }
     public function sales()
-{
-    return $this->hasMany(Sales::class);
-}
-public function kolams()
+    {
+        return $this->hasMany(Sales::class);
+    }
+    public function kolams()
     {
         return $this->hasMany(Kolam::class, 'farm_id');
     }
+
     public function siklus()
     {
         return $this->hasMany(Siklus::class, 'siklus_id');
     }
-}
 
+    public function pendapatan()
+    {
+        return $this->hasMany(Pendapatan::class, 'farms_id');
+    }
+
+    public function pengeluaran()
+    {
+        return $this->hasMany(Pengeluaran::class, 'farms_id');
+    }
+
+    public function laporanKeuangan()
+    {
+        return $this->hasMany(LaporanKeuangan::class, 'farms_id');
+    }
+}

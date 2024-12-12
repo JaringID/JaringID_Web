@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Farm; // Pastikan ini adalah model Farm, bukan Tambak
@@ -32,10 +33,18 @@ class TambakController extends Controller
         ], 201); // Status HTTP 201 Created
     }
     public function index(Request $request)
-{
-    $user = $request->user(); // Mendapatkan pengguna yang sedang login
-    $tambak = Farm::where('user_id', $user->id)->get(); // Filter berdasarkan user_id
-    return response()->json($tambak);
-}
+    {
+        $user = $request->user(); // Mendapatkan pengguna yang sedang login
+        $tambak = Farm::where('user_id', $user->id)->get(); // Filter berdasarkan user_id
+        return response()->json($tambak);
+    }
 
+    // Menambahkan filter untuk mendapatkan tambak berdasarkan user_id
+    public function getUserTambaks(Request $request)
+    {
+        $user = $request->user(); // Mendapatkan user yang sedang login berdasarkan token
+        $tambaks = Farm::where('user_id', $user->id)->get(); // Mengambil tambak berdasarkan user_id
+
+        return response()->json($tambaks);
+    }
 }
