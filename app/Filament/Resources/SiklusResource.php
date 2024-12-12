@@ -29,7 +29,7 @@ class SiklusResource extends Resource
                 Card::make()->schema([
                     Select::make('farm_id')
                         ->label('Farm')
-                        ->relationship('farm', 'name') 
+                        ->relationship('farm', 'name')
                         ->required(),
 
                     Select::make('user_id')

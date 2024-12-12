@@ -76,19 +76,25 @@ class HasilPanenResource extends Resource
                             }
                         }),
 
-                    TextInput::make('total_berat')
+                        TextInput::make('total_berat')
                         ->label('Total Berat (Kg)')
                         ->numeric()
                         ->required()
                         ->reactive()
-                        ->afterStateUpdated(fn ($state, callable $set) => self::updateTotalHarga($set)),
+                        ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                            self::updateTotalHarga($set, $state, $get('harga_per_kg'), $get('jenis_panen'));
+                        }),
+                    
 
-                    TextInput::make('harga_per_kg')
+                        TextInput::make('harga_per_kg')
                         ->label('Harga per Kg (Rp)')
                         ->numeric()
                         ->required()
                         ->reactive()
-                        ->afterStateUpdated(fn ($state, callable $set) => self::updateTotalHarga($set)),
+                        ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                            self::updateTotalHarga($set, $get('total_berat'), $state, $get('jenis_panen'));
+                        }),
+                    
 
                     TextInput::make('total_harga')
                         ->label('Total Harga (Rp)')
@@ -107,29 +113,18 @@ class HasilPanenResource extends Resource
         ]);
 }
 
-// Method untuk memperbarui total harga berdasarkan jenis panen
-// Method untuk memperbarui total harga berdasarkan jenis panen
-protected static function updateTotalHarga(callable $set)
+protected static function updateTotalHarga(callable $set, ?float $berat, ?float $harga, ?string $jenisPanen)
 {
-    // Ambil nilai berat, harga per kg, dan jenis panen dari form
-    $berat = request()->input('total_berat');
-    $harga = request()->input('harga_per_kg');
-    $jenisPanen = request()->input('jenis_panen');
-
-    // Periksa apakah keduanya ada nilainya
     if ($berat && $harga) {
-        // Logika perhitungan total harga berdasarkan jenis panen
-        if ($jenisPanen == 'Total' || $jenisPanen == 'Gagal') {
-            // Jika jenis panen Total atau Gagal, hitung total harga biasa
-            $total = $berat * $harga;
-        } elseif ($jenisPanen == 'Parsial') {
-            // Jika jenis panen Parsial, hitung dengan pengurangan (misal 0.75)
-            $total = $berat * $harga * 0.75;  // Ganti 0.75 dengan faktor yang sesuai
+        $total = $berat * $harga;
+
+        // Logika khusus untuk jenis panen "parsial"
+        if ($jenisPanen === 'parsial') {
+            $total *= 0.75; // Sesuaikan faktor pengurangan jika perlu
         }
-        // Set total harga yang sudah dihitung
+
         $set('total_harga', $total);
     } else {
-        // Jika tidak ada nilai berat atau harga, set total harga ke 0
         $set('total_harga', 0);
     }
 }
