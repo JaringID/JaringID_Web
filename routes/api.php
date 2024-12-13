@@ -81,7 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::post('/keuangan/saldo', [KeuanganController::class, 'catatSaldo']);
-Route::post('/keuangan/pendapatan', [KeuanganController::class, 'catatPendapatan']);
+Route::post('/keuangan/income', [KeuanganController::class, 'catatPendapatan']);
 Route::post('/keuangan/pengeluaran', [KeuanganController::class, 'storePengeluaran']);
 Route::post('/keuangan/laporan', [KeuanganController::class, 'generateLaporanKeuangan']);
 

@@ -36,14 +36,19 @@ class KeuanganController extends Controller
         $request->validate([
             'farms_id' => 'required|exists:farms,id',
             'pendapatan' => 'required|numeric|min:0',
-            'tanggal' => 'required|date',
+            'tanggal' => 'required|date_format:d/m/Y',
         ]);
+
+        $tanggal = \Carbon\Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
+
+        $lastSaldo = Pendapatan::where('farms_id', $request->farms_id)->latest('tanggal')->value('saldo');
+        $updatedSaldo = ($lastSaldo ?? 0) + $request->pendapatan;
 
         $pendapatan = Pendapatan::create([
             'farms_id' => $request->farms_id,
-            'saldo' => null,
+            'saldo' => $updatedSaldo,
             'pendapatan' => $request->pendapatan,
-            'tanggal' => $request->tanggal,
+            'tanggal' => $tanggal,
         ]);
 
         return response()->json([
