@@ -15,7 +15,6 @@ class Siklus extends Model
     // Kolom yang boleh diisi
     protected $fillable = [
         'farm_id',
-        'user_id',
         'kolam_id',
         'total_tebar',
         'tipe_tebar',

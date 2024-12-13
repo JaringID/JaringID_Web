@@ -32,11 +32,6 @@ class SiklusResource extends Resource
                         ->relationship('farm', 'name')
                         ->required(),
 
-                    Select::make('user_id')
-                        ->label('User')
-                        ->relationship('user', 'name')
-                        ->required(),
-
                         Select::make('kolam_id')
                         ->label('Kolam')
                         ->relationship('kolam', 'nama_kolam')
@@ -78,10 +73,6 @@ class SiklusResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('user.name')
-                    ->label('User')
-                    ->searchable()
-                    ->sortable(),
 
                 TextColumn::make('kolam.nama_kolam')
                     ->label('Kolam')

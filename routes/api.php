@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\SiklusController;
 use App\Models\Farm;
 use App\Models\Kolam;
+use App\Models\Siklus;
 use App\Models\User;
 use App\Models\Penyakit;
 use Illuminate\Http\Request;
@@ -79,6 +81,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Endpoint untuk melihat profil user berdasarkan ID (opsional)
     Route::get('/user/profile/{id}', [UserController::class, 'showProfile']);
 });
+Route::post('/siklus', [SiklusController::class, 'store']);
+Route::get('/siklus', function () {
+    return response()->json(Siklus::all());
+});
+
 
 Route::post('/keuangan/saldo', [KeuanganController::class, 'catatSaldo']);
 Route::post('/keuangan/income', [KeuanganController::class, 'catatPendapatan']);
