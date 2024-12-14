@@ -19,16 +19,31 @@ class KeuanganController extends Controller
 
         $tanggal = \Carbon\Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
 
-        $pendapatan = Pendapatan::create([
-            'farms_id' => $request->farms_id,
-            'saldo' => $request->saldo,
-            'tanggal' => $tanggal,
-        ]);
+        // Cek apakah ada data dengan farms_id dan tanggal yang sama
+        $pendapatan = Pendapatan::where('farms_id', $request->farms_id)
+            ->where('tanggal', $tanggal)
+            ->first();
+
+        if ($pendapatan) {
+            // Jika data ditemukan, update saldo
+            $pendapatan->saldo += $request->saldo;
+            $pendapatan->save();
+        } else {
+            // Jika data tidak ditemukan, buat baris baru
+            $lastSaldo = Pendapatan::where('farms_id', $request->farms_id)->latest('tanggal')->value('saldo') ?? 0;
+            $updatedSaldo = $lastSaldo + $request->saldo;
+
+            $pendapatan = Pendapatan::create([
+                'farms_id' => $request->farms_id,
+                'saldo' => $updatedSaldo,
+                'tanggal' => $tanggal,
+            ]);
+        }
 
         return response()->json([
             'message' => 'Saldo berhasil dicatat.',
             'data' => $pendapatan,
-        ], 201);
+        ], 200);
     }
 
     public function catatPendapatan(Request $request)
@@ -41,20 +56,33 @@ class KeuanganController extends Controller
 
         $tanggal = \Carbon\Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
 
-        $lastSaldo = Pendapatan::where('farms_id', $request->farms_id)->latest('tanggal')->value('saldo');
-        $updatedSaldo = ($lastSaldo ?? 0) + $request->pendapatan;
+        // Cek apakah ada data pendapatan dengan tanggal dan farms_id yang sama
+        $pendapatan = Pendapatan::where('farms_id', $request->farms_id)
+            ->where('tanggal', $tanggal)
+            ->first();
 
-        $pendapatan = Pendapatan::create([
-            'farms_id' => $request->farms_id,
-            'saldo' => $updatedSaldo,
-            'pendapatan' => $request->pendapatan,
-            'tanggal' => $tanggal,
-        ]);
+        if ($pendapatan) {
+            // Jika ditemukan, update pendapatan dan saldo
+            $pendapatan->pendapatan += $request->pendapatan;
+            $pendapatan->saldo += $request->pendapatan;
+            $pendapatan->save();
+        } else {
+            // Jika tidak ditemukan, buat data baru
+            $lastSaldo = Pendapatan::where('farms_id', $request->farms_id)->latest('tanggal')->value('saldo') ?? 0;
+            $updatedSaldo = $lastSaldo + $request->pendapatan;
+
+            $pendapatan = Pendapatan::create([
+                'farms_id' => $request->farms_id,
+                'pendapatan' => $request->pendapatan,
+                'saldo' => $updatedSaldo,
+                'tanggal' => $tanggal,
+            ]);
+        }
 
         return response()->json([
             'message' => 'Pendapatan berhasil dicatat.',
             'data' => $pendapatan,
-        ], 201);
+        ], 200);
     }
 
     public function storePengeluaran(Request $request)
@@ -62,14 +90,43 @@ class KeuanganController extends Controller
         $request->validate([
             'farms_id' => 'required|exists:farms,id',
             'jenis_pengeluaran' => 'required|in:biaya_pakan,biaya_bibit,gaji_pekerja,biaya_perawatan,biaya_lainnya',
-            'jumlah_pengeluaran' => 'required|numeric',
-            'tanggal' => 'required|date',
+            'jumlah_pengeluaran' => 'required|numeric|min:0',
+            'tanggal' => 'required|date_format:d/m/Y',
         ]);
 
-        $pengeluaran = Pengeluaran::create($request->all());
+        $tanggal = \Carbon\Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
+
+        $pendapatan = Pendapatan::where('farms_id', $request->farms_id)->latest('tanggal')->first();
+
+        if (!$pendapatan) {
+            return response()->json([
+                'message' => 'Tidak ditemukan saldo sebelumnya untuk farm ini.',
+            ], 400);
+        }
+
+        if ($pendapatan->saldo < $request->jumlah_pengeluaran) {
+            return response()->json([
+                'message' => 'Saldo tidak mencukupi untuk pengeluaran ini.',
+            ], 400);
+        }
+
+        // Kurangi saldo pada pendapatan
+        $pendapatan->saldo -= $request->jumlah_pengeluaran;
+        $pendapatan->save();
+
+        $pengeluaran = Pengeluaran::create([
+            'farms_id' => $request->farms_id,
+            'jenis_pengeluaran' => $request->jenis_pengeluaran,
+            'jumlah_pengeluaran' => $request->jumlah_pengeluaran,
+            'tanggal' => $tanggal,
+        ]);
+
         return response()->json([
             'message' => 'Pengeluaran berhasil dicatat.',
-            'data' => $pengeluaran,
+            'data' => [
+                'pengeluaran' => $pengeluaran,
+                'saldo_terbaru' => $pendapatan->saldo,
+            ],
         ], 201);
     }
 

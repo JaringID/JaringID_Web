@@ -21,4 +21,29 @@ class Pendapatan extends Model
     {
         return $this->belongsTo(Farm::class, 'farms_id');
     }
+
+    public function pengeluaran()
+    {
+        return $this->hasMany(Pengeluaran::class, 'farms_id', 'farms_id');
+    }
+
+    public function getSaldoAttribute($value)
+    {
+        return number_format($value, 2, '.', '');
+    }
+
+    public function getPendapatanAttribute($value)
+    {
+        return number_format($value, 2, '.', '');
+    }
+
+    public function setSaldoAttribute($value)
+    {
+        $this->attributes['saldo'] = round($value, 2);
+    }
+
+    public function setPendapatanAttribute($value)
+    {
+        $this->attributes['pendapatan'] = round($value, 2);
+    }
 }
