@@ -1,23 +1,25 @@
 <?php
 
-use App\Http\Controllers\SiklusController;
 use App\Models\Farm;
+use App\Models\HasilPanen;
+use App\Models\User;
 use App\Models\Kolam;
 use App\Models\Siklus;
-use App\Models\User;
 use App\Models\Penyakit;
 use Illuminate\Http\Request;
 use App\Models\MonthlyReport;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\KolamController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SiklusController;
 use App\Http\Controllers\TambakController;
+use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\HasilPanenController;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\FeedScheduleController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\KeuanganController;
 
 /*
 |--------------------------------------------------------------------------|
@@ -84,6 +86,10 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/siklus', [SiklusController::class, 'store']);
 Route::get('/siklus', function () {
     return response()->json(Siklus::all());
+});
+Route::post('/hasilpanen', [HasilPanenController::class, 'store']);
+Route::get('/hasilpanen', function () {
+    return response()->json(HasilPanen::all());
 });
 
 
