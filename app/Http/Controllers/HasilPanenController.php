@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Kolam;
+use App\Models\Siklus;
 use App\Models\HasilPanen;
+use Illuminate\Http\Request;
 
 class HasilPanenController extends Controller
 {
@@ -22,7 +24,7 @@ class HasilPanenController extends Controller
             'total_berat' => 'required|numeric',
             'harga_per_kg' => 'required|numeric',
             'total_harga' => 'required|numeric',
-            'pembeli' => 'required|string',
+            'pembeli' => 'nullable|string',
             'catatan' => 'nullable|string',
         ]);
 
@@ -36,4 +38,5 @@ class HasilPanenController extends Controller
             'data' => $hasilPanen,
         ], 201);
     }
+    
 }

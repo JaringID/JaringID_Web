@@ -54,13 +54,19 @@ class Kolam extends Model
 }
  // Mengubah status kolam menjadi aktif
  public function setStatusAktif()
- {
-     $this->update(['status' => 'aktif']);
- }
- public function setStatusTidakAktif()
     {
-        $this->refresh();
-        $this->update(['status' => 'tidak_aktif']);
+        \DB::transaction(function () {
+            $this->refresh();
+            $this->update(['status' => 'aktif']);
+        });
+    }
+
+    public function setStatusTidakAktif()
+    {
+        \DB::transaction(function () {
+            $this->refresh();
+            $this->update(['status' => 'tidak_aktif']);
+        });
     }
 public function hasilPanens()
 {

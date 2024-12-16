@@ -36,22 +36,44 @@ class HasilPanen extends Model
     protected static function boot()
     {
         parent::boot();
+        
         static::saving(function ($model) {
             if ($model->total_berat && $model->harga_per_kg) {
                 $model->total_harga = $model->total_berat * $model->harga_per_kg;
             }
         });
 
-
+        // Handler untuk created dan updated
         static::saved(function ($model) {
-            // Perbarui status Siklus dan Kolam berdasarkan jenis panen
-            if ($model->jenis_panen === 'total' || $model->jenis_panen === 'gagal') {
-                $model->siklus->update(['status_siklus' => 'berhenti']);
-                $model->kolam->update(['status' => 'tidak_aktif']);
-            } elseif ($model->jenis_panen === 'parsial') {
-                $model->siklus->update(['status_siklus' => 'sedang_berjalan']);
-                $model->kolam->update(['status' => 'aktif']);
+            // Load relasi yang diperlukan
+            if (!$model->relationLoaded('siklus')) {
+                $model->load('siklus');
             }
+            if (!$model->relationLoaded('kolam')) {
+                $model->load('kolam');
+            }
+
+            \DB::transaction(function () use ($model) {
+                if ($model->jenis_panen === 'total' || $model->jenis_panen === 'gagal') {
+                    // Update siklus
+                    if ($model->siklus) {
+                        $model->siklus->update(['status_siklus' => 'berhenti']);
+                    }
+                    
+                    // Update kolam
+                    if ($model->kolam) {
+                        $model->kolam->setStatusTidakAktif();
+                    }
+                } elseif ($model->jenis_panen === 'parsial') {
+                    // Jika parsial, pastikan status tetap aktif
+                    if ($model->siklus) {
+                        $model->siklus->update(['status_siklus' => 'sedang_berjalan']);
+                    }
+                    if ($model->kolam) {
+                        $model->kolam->setStatusAktif();
+                    }
+                }
+            });
         });
     }
 

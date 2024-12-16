@@ -54,23 +54,29 @@ class Siklus extends Model
         return $this->hasOne(HasilPanen::class, 'siklus_id');
     }
     protected static function booted()
-{
-    static::created(function ($siklus) {
-        // Jika siklus pertama kali dibuat, ubah status kolam menjadi 'aktif'
-        if ($siklus->kolam && $siklus->kolam->status === 'belum_aktif') {
-            $siklus->kolam->setStatusAktif();
-        }
-    });
-
-    static::updated(function ($siklus) {
-        // Jika status siklus berubah menjadi 'berhenti', ubah status kolam menjadi 'tidak_aktif'
-        if ($siklus->isDirty('status_siklus') && $siklus->status_siklus === 'berhenti') {
-            if ($siklus->kolam) {
-                $siklus->kolam->update(['status' => 'tidak_aktif']);
+    {
+        static::created(function ($siklus) {
+            if ($siklus->kolam && $siklus->kolam->status === 'belum_aktif') {
+                $siklus->kolam->setStatusAktif();
             }
-        }
-    });
-}
+        });
+
+        static::updated(function ($siklus) {
+            $siklus->load('kolam'); // Pastikan relasi kolam ter-load
+            
+            if ($siklus->isDirty('status_siklus')) {
+                if ($siklus->status_siklus === 'berhenti') {
+                    if ($siklus->kolam) {
+                        $siklus->kolam->setStatusTidakAktif();
+                    }
+                } elseif ($siklus->status_siklus === 'sedang_berjalan') {
+                    if ($siklus->kolam) {
+                        $siklus->kolam->setStatusAktif();
+                    }
+                }
+            }
+        });
+    }
 
     
 
@@ -85,21 +91,25 @@ class Siklus extends Model
     // Proses perubahan status setelah panen
     public function prosesPanen()
     {
+        $this->load('hasilPanen', 'kolam'); // Load relasi yang diperlukan
+        
         $hasilPanen = $this->hasilPanen;
-
         if (!$hasilPanen) {
             throw new \Exception('Data hasil panen tidak ditemukan.');
         }
 
-        $jenisPanen = $hasilPanen->jenis_panen;
-
-        if ($jenisPanen === 'parsial') {
-            // Tetap berjalan, kolam tetap aktif
-            $this->update(['status_siklus' => 'sedang_berjalan']);
-        } elseif (in_array($jenisPanen, ['total', 'gagal'])) {
-            // Siklus berhenti, kolam tidak aktif
-            $this->update(['status_siklus' => 'berhenti']);
-            $this->kolam->setStatusTidakAktif();
-        }
+        \DB::transaction(function () use ($hasilPanen) {
+            if (in_array($hasilPanen->jenis_panen, ['total', 'gagal'])) {
+                $this->update(['status_siklus' => 'berhenti']);
+                if ($this->kolam) {
+                    $this->kolam->setStatusTidakAktif();
+                }
+            } elseif ($hasilPanen->jenis_panen === 'parsial') {
+                $this->update(['status_siklus' => 'sedang_berjalan']);
+                if ($this->kolam) {
+                    $this->kolam->setStatusAktif();
+                }
+            }
+        });
     }
 }

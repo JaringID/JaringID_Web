@@ -98,4 +98,7 @@ Route::post('/keuangan/income', [KeuanganController::class, 'catatPendapatan']);
 Route::post('/keuangan/pengeluaran', [KeuanganController::class, 'storePengeluaran']);
 Route::post('/keuangan/laporan', [KeuanganController::class, 'generateLaporanKeuangan']);
 
+Route::post('/stop-siklus', [SiklusController::class, 'stopSiklus']);
+
+
 Route::middleware('auth:sanctum')->get('/farms', [TambakController::class, 'getUserTambaks']);
