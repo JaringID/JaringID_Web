@@ -20,6 +20,7 @@ use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\HasilPanenController;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\FeedScheduleController;
+use App\Http\Controllers\PemberianPakanController;
 
 /*
 |--------------------------------------------------------------------------|
@@ -100,5 +101,6 @@ Route::post('/keuangan/laporan', [KeuanganController::class, 'generateLaporanKeu
 
 Route::post('/stop-siklus', [SiklusController::class, 'stopSiklus']);
 
+Route::post('/catat-pakan', [PemberianPakanController::class, 'catatPakanHarian']);
 
 Route::middleware('auth:sanctum')->get('/farms', [TambakController::class, 'getUserTambaks']);
