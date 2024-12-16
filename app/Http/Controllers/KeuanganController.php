@@ -130,6 +130,48 @@ class KeuanganController extends Controller
         ], 201);
     }
 
+    public function getLaporanKeuangan(Request $request)
+    {
+        $request->validate([
+            'farms_id' => 'required|exists:farms,id',
+            'bulan' => 'required|integer|min:1|max:12',
+            'tahun' => 'required|integer|min:2000|max:' . date('Y'),
+        ]);
+
+        $farms_id = $request->farms_id;
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+
+        // Total pendapatan dan pengeluaran per bulan
+        $totalPendapatan = Pendapatan::where('farms_id', $farms_id)
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->sum('pendapatan');
+
+        $totalPengeluaran = Pengeluaran::where('farms_id', $farms_id)
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->sum('jumlah_pengeluaran');
+
+        // Saldo (pendapatan - pengeluaran)
+        $selisih = $totalPendapatan - $totalPengeluaran;
+
+        // Return JSON response
+        return response()->json([
+            'message' => 'Laporan berhasil diambil',
+            'data' => [
+                [
+                    'farms_id' => $farms_id,
+                    'year' => $tahun,
+                    'month' => $bulan,
+                    'total_pendapatan' => $totalPendapatan,
+                    'total_pengeluaran' => $totalPengeluaran,
+                    'keuntungan_bersih' => $selisih,
+                ]
+            ]
+        ]);
+    }
+
     public function generateLaporanKeuangan(Request $request)
     {
         $request->validate([

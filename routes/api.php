@@ -99,6 +99,8 @@ Route::post('/keuangan/income', [KeuanganController::class, 'catatPendapatan']);
 Route::post('/keuangan/pengeluaran', [KeuanganController::class, 'storePengeluaran']);
 Route::post('/keuangan/laporan', [KeuanganController::class, 'generateLaporanKeuangan']);
 
+Route::get('/keuangan/bulanan', [KeuanganController::class, 'getLaporanKeuangan']);
+
 Route::post('/stop-siklus', [SiklusController::class, 'stopSiklus']);
 
 Route::post('/catat-pakan', [PemberianPakanController::class, 'catatPakanHarian']);
