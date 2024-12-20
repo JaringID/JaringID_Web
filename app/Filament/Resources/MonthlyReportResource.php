@@ -25,42 +25,92 @@ class MonthlyReportResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-        ->schema([
-            Forms\Components\Select::make('farm_id')
-                ->relationship('farm', 'name')
-                ->required(),
-            Forms\Components\DatePicker::make('report_month')
-            ->label('Laporan Bulanan')
-            ->required(),
-            Forms\Components\TextInput::make('income')->numeric()
-            ->label('Pendapatan')
-            ->required(),
-            Forms\Components\TextInput::make('expenses')->numeric()
-            ->label('Pengeluaran')
-            ->required(),
-            Forms\Components\Textarea::make('details')
-            ->label('Rincian')
-            ,
-            Forms\Components\Select::make('status')
-                ->options(['draft' => 'Draft', 'finalized' => 'Finalized'])
-                ->default('draft')
-                ->required(),
-        ]);
+            ->schema([
+                Forms\Components\Select::make('farms_id')
+                    ->relationship('farm', 'name')
+                    ->label('Nama Tambak')
+                    ->required(),
+
+                Forms\Components\Select::make('kolams_id')
+                    ->relationship('kolam', 'nama_kolam')
+                    ->label('Nama Kolam')
+                    ->required(),
+
+                Forms\Components\Select::make('siklus_id')
+                    ->relationship('siklus', 'status_siklus')
+                    ->label('Siklus')
+                    ->required(),
+
+                Forms\Components\Select::make('hasil_panens_id')
+                    ->relationship('hasilPanen', 'jenis_panen')
+                    ->required()
+                    ->label('Hasil Panen'),
+
+
+                Forms\Components\Select::make('catat_pakan_harian_id')
+                    ->relationship('catatPakanHarian', 'tanggal')
+                    ->label('Tanggal Catat Pakan Harian')
+                    ->required(),
+
+                Forms\Components\DatePicker::make('report_month')
+                    ->label('Bulan Laporan')
+                    ->required(),
+
+                Forms\Components\Textarea::make('details')
+                    ->label('Rincian'),
+            ]);
     }
+
 
     public static function table(Table $table): Table
     {
         return $table
-        ->columns([
-            Tables\Columns\TextColumn::make('farm.name')->label('Farm Name'),
-            Tables\Columns\TextColumn::make('report_month')->date(),
-            Tables\Columns\TextColumn::make('income')->money('IDR'),
-          
-            Tables\Columns\BadgeColumn::make('status')->colors([
-                'success' => 'finalized',
-                'warning' => 'draft',
-            ]),
-        ])
+            ->columns([
+                Tables\Columns\TextColumn::make('farm.name')
+                    ->label('Nama Tambak')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('kolam.nama_kolam')
+                    ->label('Nama Kolam')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('siklus.status_siklus')
+                    ->label('Status Siklus')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('hasilPanen.tanggal_panen')
+                    ->label('Tanggal Panen')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('hasilPanen.jenis_panen')
+                    ->label('Jenis Panen')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('hasilPanen.total_berat')
+                    ->label('Total Berat')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('hasilPanen.pembeli')
+                    ->label('Pembeli')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('catatPakanHarian.tanggal')
+                    ->label('Tanggal Pakan')
+                    ->date(),
+
+                Tables\Columns\TextColumn::make('report_month')
+                    ->label('Bulan Laporan')
+                    ->date(),
+
+                Tables\Columns\TextColumn::make('details')
+                    ->label('Rincian')
+                    ->limit(50),
+            ])
             ->filters([
                 //
             ])

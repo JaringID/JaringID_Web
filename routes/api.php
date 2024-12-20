@@ -18,6 +18,7 @@ use App\Http\Controllers\SiklusController;
 use App\Http\Controllers\TambakController;
 use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\HasilPanenController;
+use App\Http\Controllers\ActivityController;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\FeedScheduleController;
 use App\Http\Controllers\PemberianPakanController;
@@ -106,3 +107,12 @@ Route::post('/stop-siklus', [SiklusController::class, 'stopSiklus']);
 Route::post('/catat-pakan', [PemberianPakanController::class, 'catatPakanHarian']);
 
 Route::middleware('auth:sanctum')->get('/farms', [TambakController::class, 'getUserTambaks']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Rute untuk mendapatkan data catat pakan terbaru
+    Route::get('/latest-pakan-harian', [ActivityController::class, 'getLatestPakanHarian']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/farm-transactions', [ActivityController::class, 'getTransactionHistory']);
+});
