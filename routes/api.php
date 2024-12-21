@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CatatPakanHarian;
 use App\Models\Farm;
 use App\Models\HasilPanen;
 use App\Models\User;
@@ -61,6 +62,7 @@ Route::post('/tambak', [TambakController::class, 'store'])->middleware('auth:san
 
 Route::get('/tambak', [TambakController::class, 'index'])->middleware('auth:sanctum');
 
+Route::post('/reports', [ReportController::class, 'store']);
 
 Route::get('/reports', function () {
     return response()->json(MonthlyReport::all());
@@ -105,6 +107,9 @@ Route::get('/keuangan/bulanan', [KeuanganController::class, 'getLaporanKeuangan'
 Route::post('/stop-siklus', [SiklusController::class, 'stopSiklus']);
 
 Route::post('/catat-pakan', [PemberianPakanController::class, 'catatPakanHarian']);
+Route::get('/catat-pakan', function () {
+    return response()->json(CatatPakanHarian::all());
+});
 
 Route::middleware('auth:sanctum')->get('/farms', [TambakController::class, 'getUserTambaks']);
 

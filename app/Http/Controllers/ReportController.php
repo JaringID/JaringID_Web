@@ -30,21 +30,25 @@ class ReportController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input
+        // Validasi data yang dikirimkan dari aplikasi
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
+            'farms_id' => 'required|integer',
+            'kolams_id' => 'required|integer',
+            'siklus_id' => 'required|integer',
+            'hasil_panens_id' => 'required|integer',
+            'catat_pakan_harian_id' => 'required|integer',
+            'report_month' => 'required|date',
+            'details' => 'nullable|string',
         ]);
 
-        // Simpan laporan baru
-        $report = MonthlyReport::create([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-        ]);
+        // Simpan data ke database
+        $report = MonthlyReport::create($validated);
 
+        // Kembalikan respons berhasil
         return response()->json([
+            'success' => true,
             'message' => 'Laporan berhasil disimpan',
-            'report' => $report,
+            'data' => $report
         ], 201);
     }
 }

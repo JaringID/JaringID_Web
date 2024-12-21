@@ -82,4 +82,56 @@ class PemberianPakanController extends Controller
             'data' => $catatPakan,
         ], 200);
     }
+    public function getCatatPakan(Request $request)
+{
+    // Validasi input (opsional, jika diperlukan)
+    $request->validate([
+        'farms_id' => 'required|exists:farms,id',
+        'kolam_id' => 'required|exists:kolams,id',
+        'tanggal' => 'required|date_format:d/m/Y', // Format DD/MM/YYYY
+    ]);
+
+    // Konversi format tanggal ke YYYY-MM-DD
+    $tanggalInput = $request->tanggal;
+    try {
+        $tanggal = Carbon::createFromFormat('d/m/Y', $tanggalInput)->format('Y-m-d');
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Format tanggal tidak valid. Gunakan DD/MM/YYYY.'
+        ], 400);
+    }
+
+    // Ambil data berdasarkan farms_id, kolam_id, dan tanggal
+    $catatPakan = CatatPakanHarian::where('farms_id', $request->farms_id)
+        ->where('kolam_id', $request->kolam_id)
+        ->where('tanggal', $tanggal)
+        ->first();
+
+    if (!$catatPakan) {
+        return response()->json([
+            'message' => 'Data pemberian pakan tidak ditemukan.',
+            'data' => null,
+        ], 404);
+    }
+
+    // Siapkan response sesuai dengan `CatatPakanResponse`
+    return response()->json([
+        'message' => 'Data ditemukan.',
+        'id' => $catatPakan->id,
+        'data' => [
+            'farms_id' => $catatPakan->farms_id,
+            'kolam_id' => $catatPakan->kolam_id,
+            'jam_pakan' => $catatPakan->jadwal_pertama ?? '',
+            'jumlah_pakan' => $catatPakan->jumlah_pakan_pertama ?? 0,
+            'tanggal' => $catatPakan->tanggal,
+        ],
+        'farms_id' => $catatPakan->farms_id,
+        'kolam_id' => $catatPakan->kolam_id,
+        'jam_pakan' => $catatPakan->jadwal_pertama ?? '',
+        'jumlah_pakan' => $catatPakan->jumlah_pakan_pertama ?? 0,
+        'tanggal' => $catatPakan->tanggal,
+    ], 200);
+}
+
+    
 }

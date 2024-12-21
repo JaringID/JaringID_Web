@@ -16,7 +16,6 @@ class CatatPakanHarian extends Model
     protected $fillable = [
         'farms_id',
         'kolam_id',
-        'siklus_id',
         'jadwal_pertama',
         'jumlah_pakan_pertama',
         'jadwal_kedua',
@@ -42,9 +41,4 @@ class CatatPakanHarian extends Model
         return $this->belongsTo(Kolam::class, 'kolam_id');
     }
 
-    // Relasi ke tabel siklus
-    public function siklus()
-    {
-        return $this->belongsTo(Siklus::class, 'siklus_id');
-    }
 }
