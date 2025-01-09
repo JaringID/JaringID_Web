@@ -25,7 +25,7 @@ class UserController extends Controller
 
         // Mengembalikan data profil user
         return response()->json([
-            'profile_picture' => $user->profile_picture ? 'storage/' . $user->profile_picture : null,
+            'profile_picture' => $user->profile_picture_url,
             'name'            => $user->name,
             'email'           => $user->email,
             'phone_number'    => $user->phone_number,

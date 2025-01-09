@@ -29,7 +29,7 @@ class FilamentServiceProvider extends ServiceProvider
                 abort(403, 'Akses Ditolak Wak');
             }
             Filament::registerWidgets([
-                UserProfile::class,
+
             ]);
             Filament::registerResources([
                 UserResource::class,

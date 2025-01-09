@@ -27,10 +27,12 @@ class Penyakit extends Model
 }
 
 public function getImageUrlAttribute()
-{
-    return $this->image ? asset('storage/' . $this->image) : null;
-}
-
+    {
+        if ($this->image) {
+            return url('storage/' . $this->image);
+        }
+        return null;
+    }
 
 
 

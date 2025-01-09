@@ -130,4 +130,10 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
+    public static function shouldRegisterNavigation(): bool
+{
+    // Return false untuk menghapus resource dari sidebar
+    return false;
+}
+
 }
