@@ -8,6 +8,7 @@ use App\Models\Farm;
 use App\Models\Pendapatan;
 use App\Models\Pengeluaran;
 use App\Models\CatatPakanHarian;
+use App\Models\Kolam;
 
 class ActivityController extends Controller
 {
@@ -27,7 +28,7 @@ class ActivityController extends Controller
         }
 
         // Ambil semua tambak (farms) yang dimiliki oleh user
-        $farms = Farm::where('user_id', $user->id)->pluck('id');
+        $farms = Farm::with('kolams')->where('user_id', $user->id)->get();
 
         // Jika user tidak memiliki tambak, return response kosong
         if ($farms->isEmpty()) {
@@ -37,46 +38,53 @@ class ActivityController extends Controller
             ], 404);
         }
 
-        // Ambil data catat pakan terbaru untuk setiap tambak
-        $latestPakanHarian = CatatPakanHarian::whereIn('farms_id', $farms)
+        // Ambil semua data catat pakan dari semua tambak milik user yang sedang login
+        $pakanHarian = CatatPakanHarian::whereIn('farms_id', $farms->pluck('id'))
             ->orderBy('tanggal', 'desc') // Urutkan berdasarkan tanggal terbaru
-            ->get()
-            ->groupBy('farms_id') // Kelompokkan berdasarkan tambak
-            ->map(fn($group) => $group->first()); // Ambil data pertama dari setiap tambak (terbaru)
-
-        // Konversi data menjadi array untuk response JSON
-        $data = $latestPakanHarian->values()->map(function ($catatPakan) {
-            return [
-                'id' => $catatPakan->id,
-                'farms_id' => $catatPakan->farms_id,
-                'kolam_id' => $catatPakan->kolam_id,
-                'jadwal_pertama' => $catatPakan->jadwal_pertama,
-                'jumlah_pakan_pertama' => $catatPakan->jumlah_pakan_pertama,
-                'jadwal_kedua' => $catatPakan->jadwal_kedua,
-                'jumlah_pakan_kedua' => $catatPakan->jumlah_pakan_kedua,
-                'jadwal_ketiga' => $catatPakan->jadwal_ketiga,
-                'jumlah_pakan_ketiga' => $catatPakan->jumlah_pakan_ketiga,
-                'jadwal_keempat' => $catatPakan->jadwal_keempat,
-                'jumlah_pakan_keempat' => $catatPakan->jumlah_pakan_keempat,
-                'jadwal_kelima' => $catatPakan->jadwal_kelima,
-                'jumlah_pakan_kelima' => $catatPakan->jumlah_pakan_kelima,
-                'tanggal' => $catatPakan->tanggal,
-                'created_at' => $catatPakan->created_at,
-                'updated_at' => $catatPakan->updated_at,
-            ];
-        });
+            ->get();
 
         // Jika tidak ada data catat pakan
-        if ($data->isEmpty()) {
+        if ($pakanHarian->isEmpty()) {
             return response()->json([
                 'message' => 'No feeding data found for the user\'s farms.',
                 'data' => []
             ], 404);
         }
 
+        // Proses data untuk menambahkan nama tambak dan nama kolam
+        $data = $pakanHarian->map(function ($catatPakan) use ($farms) {
+            $farm = $farms->firstWhere('id', $catatPakan->farms_id); // Cari tambak berdasarkan ID
+            $kolam = $farm ? $farm->kolams->firstWhere('id', $catatPakan->kolam_id) : null; // Cari kolam berdasarkan ID di tambak
+
+            // Hitung total jumlah pakan
+            $totalPakan = (float) $catatPakan->jumlah_pakan_pertama +
+                (float) $catatPakan->jumlah_pakan_kedua +
+                (float) $catatPakan->jumlah_pakan_ketiga +
+                (float) $catatPakan->jumlah_pakan_keempat +
+                (float) $catatPakan->jumlah_pakan_kelima;
+
+            return [
+                'id' => $catatPakan->id,
+                'farm_name' => $farm ? $farm->name : 'Unknown Farm', // Nama tambak
+                'kolam_name' => $kolam ? $kolam->nama_kolam : 'Unknown Kolam', // Nama kolam
+                'jadwal_pertama' => $catatPakan->jadwal_pertama,
+                'jumlah_pakan_pertama' => (float) $catatPakan->jumlah_pakan_pertama,
+                'jadwal_kedua' => $catatPakan->jadwal_kedua,
+                'jumlah_pakan_kedua' => (float) $catatPakan->jumlah_pakan_kedua,
+                'jadwal_ketiga' => $catatPakan->jadwal_ketiga,
+                'jumlah_pakan_ketiga' => (float) $catatPakan->jumlah_pakan_ketiga,
+                'jadwal_keempat' => $catatPakan->jadwal_keempat,
+                'jumlah_pakan_keempat' => (float) $catatPakan->jumlah_pakan_keempat,
+                'jadwal_kelima' => $catatPakan->jadwal_kelima,
+                'jumlah_pakan_kelima' => (float) $catatPakan->jumlah_pakan_kelima,
+                'total_pakan_harian' => $totalPakan, // Total pakan
+                'tanggal' => $catatPakan->tanggal,
+            ];
+        });
+
         // Return response JSON
         return response()->json([
-            'message' => 'Latest feeding data retrieved successfully.',
+            'message' => 'Feeding data retrieved successfully.',
             'data' => $data
         ], 200);
     }
