@@ -35,20 +35,22 @@
             </div>
             @endif
 
-            <form action="{{ route('web.register.process') }}" method="POST">
+            <form action="{{ url('/api-register') }}" method="POST">
                 @csrf
                 <div class="mb-4">
                     <label for="name" class="block mb-2 text-sm font-medium">Nama</label>
-                    <input type="text" id="name" name="name" class="w-full px-4 py-2 border rounded" required>
+                    <input type="text" id="name" name="name" class="w-full px-4 py-2 border rounded" required
+                        value="{{ old('name') }}">
                 </div>
                 <div class="mb-4">
                     <label for="phone_number" class="block mb-2 text-sm font-medium">Nomor HP</label>
                     <input type="text" id="phone_number" name="phone_number" class="w-full px-4 py-2 border rounded"
-                        required>
+                        required value="{{ old('phone_number') }}">
                 </div>
                 <div class="mb-4">
                     <label for="email" class="block mb-2 text-sm font-medium">Email</label>
-                    <input type="email" id="email" name="email" class="w-full px-4 py-2 border rounded" required>
+                    <input type="email" id="email" name="email" class="w-full px-4 py-2 border rounded" required
+                        value="{{ old('email') }}">
                 </div>
                 <div class="mb-4">
                     <label for="password" class="block mb-2 text-sm font-medium">Password</label>
@@ -63,22 +65,28 @@
                 <div class="mb-6">
                     <p class="mb-2 text-sm font-medium">Pekerjaan</p>
                     <label>
-                        <input type="radio" name="role" value="owner" required> Pemilik Tambak
+                        <input type="radio" name="role" value="owner" required
+                            {{ old('role') == 'owner' ? 'checked' : '' }}> Pemilik Tambak
                     </label>
                     <label>
-                        <input type="radio" name="role" value="technician" required> Teknisi
+                        <input type="radio" name="role" value="technician" required
+                            {{ old('role') == 'technician' ? 'checked' : '' }}> Teknisi
                     </label>
                     <label>
-                        <input type="radio" name="role" value="worker" required> Pekerja Tambak
+                        <input type="radio" name="role" value="worker" required
+                            {{ old('role') == 'worker' ? 'checked' : '' }}> Pekerja Tambak
                     </label>
                 </div>
                 <button type="submit"
                     class="w-full px-4 py-2 text-white bg-customBlue rounded-full hover:bg-customBlueHover">
                     Create Account
                 </button>
-                <p class="mt-4 text-center text-gray-500">Sudah mempunyai akun? <a href="{{ route('login') }}"
-                        class="text-customBlue hover:underline">Sign in</a></p>
+                <p class="mt-4 text-center text-gray-500">Sudah mempunyai akun? <a
+                        href="{{route('filament.admin.auth.login')}}" class="text-customBlue hover:underline">Sign
+                        in</a></p>
             </form>
+
+
         </div>
     </div>
 </body>
