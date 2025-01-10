@@ -70,9 +70,6 @@ class AuthController extends Controller
             'role' => $request->role,
         ]);
 
-        return response()->json([
-            'message' => 'Akun berhasil dibuat!',
-            'user' => $user,
-        ], 201);
+        return redirect()->route('filament.admin.auth.login')->with('success', 'Registrasi berhasil! Silakan login.');
     }
 }
