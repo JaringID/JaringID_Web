@@ -28,9 +28,11 @@
         </ul>
 
         <!-- Button -->
-        <a href="#" class="px-4 py-2 text-white bg-customBlue rounded-full hover:bg-customBlueHover">
+        <a href="{{ route('register') }}"
+            class="px-4 py-2 text-white bg-customBlue rounded-full hover:bg-customBlueHover">
             Daftar Sekarang
         </a>
+
 
     </nav>
 
@@ -46,7 +48,7 @@
                     Optimalkan Tambak Udang Anda dengan JaringID, Platform berbasis digital yang efisien dan mudah
                     digunakan.
                 </p>
-                <a href="#"
+                <a href="{{route('filament.admin.auth.login')}}"
                     class="px-6 py-3 bg-customBlue text-white rounded-full hover:bg-customBlueHover transition-all">
                     Bergabung Sekarang
                 </a>

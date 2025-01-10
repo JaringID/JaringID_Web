@@ -54,12 +54,9 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/api-register', [AuthController::class, 'register']);
 
-
 Route::get('/penyakit', [PenyakitController::class, 'index']);
 
-
 Route::post('/tambak', [TambakController::class, 'store'])->middleware('auth:sanctum');
-
 
 Route::get('/tambak', [TambakController::class, 'index'])->middleware('auth:sanctum');
 
