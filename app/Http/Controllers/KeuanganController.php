@@ -137,32 +137,71 @@ class KeuanganController extends Controller
             'bulan' => 'required|integer|min:1|max:12',
             'tahun' => 'required|integer|min:2000|max:' . date('Y'),
         ]);
+
         $farms_id = $request->farms_id;
         $bulan = $request->bulan;
         $tahun = $request->tahun;
-        // Total pendapatan dan pengeluaran per bulan
+
+        // Total pendapatan per bulan
         $totalPendapatan = Pendapatan::where('farms_id', $farms_id)
             ->whereMonth('tanggal', $bulan)
             ->whereYear('tanggal', $tahun)
             ->sum('pendapatan');
-        $totalPengeluaran = Pengeluaran::where('farms_id', $farms_id)
+
+        // Total pengeluaran per kategori per bulan
+        $totalBiayaPakan = Pengeluaran::where('farms_id', $farms_id)
+            ->where('jenis_pengeluaran', 'biaya_pakan')
             ->whereMonth('tanggal', $bulan)
             ->whereYear('tanggal', $tahun)
             ->sum('jumlah_pengeluaran');
-        // Saldo (pendapatan - pengeluaran)
-        $selisih = $totalPendapatan - $totalPengeluaran;
+
+        $totalBiayaBibit = Pengeluaran::where('farms_id', $farms_id)
+            ->where('jenis_pengeluaran', 'biaya_bibit')
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->sum('jumlah_pengeluaran');
+
+        $totalGajiPekerja = Pengeluaran::where('farms_id', $farms_id)
+            ->where('jenis_pengeluaran', 'gaji_pekerja')
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->sum('jumlah_pengeluaran');
+
+        $totalBiayaPerawatan = Pengeluaran::where('farms_id', $farms_id)
+            ->where('jenis_pengeluaran', 'biaya_perawatan')
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->sum('jumlah_pengeluaran');
+
+        $totalBiayaLainnya = Pengeluaran::where('farms_id', $farms_id)
+            ->where('jenis_pengeluaran', 'biaya_lainnya')
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->sum('jumlah_pengeluaran');
+
+        // Total pengeluaran
+        $totalPengeluaran = $totalBiayaPakan + $totalBiayaBibit + $totalGajiPekerja + $totalBiayaPerawatan + $totalBiayaLainnya;
+
+        // Keuntungan bersih (pendapatan - pengeluaran)
+        $keuntunganBersih = $totalPendapatan - $totalPengeluaran;
+
         // Return JSON response
         return response()->json([
             'message' => 'Laporan berhasil diambil',
             'data' => [
-                [
-                    'farms_id' => $farms_id,
-                    'year' => $tahun,
-                    'month' => $bulan,
-                    'total_pendapatan' => $totalPendapatan,
-                    'total_pengeluaran' => $totalPengeluaran,
-                    'keuntungan_bersih' => $selisih,
-                ]
+                'farms_id' => $farms_id,
+                'year' => $tahun,
+                'month' => $bulan,
+                'total_pendapatan' => $totalPendapatan,
+                'total_pengeluaran' => $totalPengeluaran,
+                'keuntungan_bersih' => $keuntunganBersih,
+                'rincian_pengeluaran' => [
+                    'total_biaya_pakan' => $totalBiayaPakan,
+                    'total_biaya_bibit' => $totalBiayaBibit,
+                    'total_gaji_pekerja' => $totalGajiPekerja,
+                    'total_biaya_perawatan' => $totalBiayaPerawatan,
+                    'total_biaya_lainnya' => $totalBiayaLainnya,
+                ],
             ]
         ]);
     }
