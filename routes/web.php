@@ -28,3 +28,5 @@ Route::get('/', function () {
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
+
+Route::post('/api-register', [AuthController::class, 'register']);
