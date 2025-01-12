@@ -28,6 +28,10 @@ class PengeluaranResource extends Resource
             Forms\Components\Select::make('farms_id')
                 ->label('Tambak')
                 ->relationship('farm', 'name') // Pastikan kolom 'nama' ada di tabel farms
+                ->options(function () {
+                    return \App\Models\Farm::where('user_id', auth()->id())
+                        ->pluck('name', 'id');
+                })
                 ->required(),
 
             Forms\Components\TextInput::make('jenis_pengeluaran')

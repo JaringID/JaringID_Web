@@ -27,11 +27,34 @@ class CatatPakanHarianResource extends Resource
                 Forms\Components\Select::make('farms_id')
                     ->relationship('farm', 'name')
                     ->required()
+                    ->options(function () {
+                        return \App\Models\Farm::where('user_id', auth()->id())
+                            ->pluck('name', 'id');
+                    })
+                    ->live()
+                    ->afterStateUpdated(function($state, Forms\Set $set) {
+                        $set('kolams_id', null);
+                        $set('siklus_id', null);
+                        $set('hasil_panens_id', null);
+                    })
                     ->label('Farm'),
 
                 Forms\Components\Select::make('kolam_id')
                     ->relationship('kolam', 'nama_kolam')
                     ->required()
+                    ->options(function (Forms\Get $get) {
+                        $farmId = $get('farms_id');
+                        if (!$farmId) {
+                            return [];
+                        }
+                        return \App\Models\Kolam::where('farm_id', $farmId)
+                            ->pluck('nama_kolam', 'id');
+                    })
+                    ->live()
+                    ->afterStateUpdated(function($state, Forms\Set $set) {
+                        $set('siklus_id', null);
+                        $set('hasil_panens_id', null);
+                    })
                     ->label('Kolam'),
 
                 Forms\Components\DatePicker::make('tanggal')

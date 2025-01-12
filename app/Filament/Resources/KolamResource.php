@@ -31,6 +31,10 @@ class KolamResource extends Resource
                 Forms\Components\Select::make('farm_id')
                     ->label('Tambak')
                     ->relationship('farm', 'name')
+                    ->options(function () {
+                        return \App\Models\Farm::where('user_id', auth()->id())
+                            ->pluck('name', 'id');
+                    })
                     ->required(),
 
                 Forms\Components\Radio::make('tipe_kolam')

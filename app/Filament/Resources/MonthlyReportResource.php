@@ -28,27 +28,74 @@ class MonthlyReportResource extends Resource
                 Forms\Components\Select::make('farms_id')
                     ->relationship('farm', 'name')
                     ->label('Nama Tambak')
+                    ->options(function () {
+                        return \App\Models\Farm::where('user_id', auth()->id())
+                            ->pluck('name', 'id');
+                    })
+                    ->live()
+                    ->afterStateUpdated(function($state, Forms\Set $set) {
+                        $set('kolams_id', null);
+                        $set('siklus_id', null);
+                        $set('hasil_panens_id', null);
+                    })
                     ->required(),
 
                 Forms\Components\Select::make('kolams_id')
                     ->relationship('kolam', 'nama_kolam')
                     ->label('Nama Kolam')
+                    ->options(function (Forms\Get $get) {
+                        $farmId = $get('farms_id');
+                        if (!$farmId) {
+                            return [];
+                        }
+                        return \App\Models\Kolam::where('farm_id', $farmId)
+                            ->pluck('nama_kolam', 'id');
+                    })
+                    ->live()
+                    ->afterStateUpdated(function($state, Forms\Set $set) {
+                        $set('siklus_id', null);
+                        $set('hasil_panens_id', null);
+                    })
                     ->required(),
 
                 Forms\Components\Select::make('siklus_id')
                     ->relationship('siklus', 'status_siklus')
                     ->label('Siklus')
+                    ->options(function (Forms\Get $get) {
+                        $kolamId = $get('kolams_id');
+                        if (!$kolamId) {
+                            return [];
+                        }
+                        return \App\Models\Siklus::where('kolam_id', $kolamId)
+                            ->pluck('status_siklus', 'id');
+                    })
                     ->required(),
 
                 Forms\Components\Select::make('hasil_panens_id')
                     ->relationship('hasilPanen', 'jenis_panen')
-                    ->required()
-                    ->label('Hasil Panen'),
+                    ->label('Hasil Panen')
+                    ->options(function (Forms\Get $get) {
+                        $kolamId = $get('kolams_id');
+                        if (!$kolamId) {
+                            return [];
+                        }
+                        return \App\Models\HasilPanen::where('kolams_id', $kolamId)
+                            ->pluck('jenis_panen', 'id');
+                    })
+                    ->required(),
 
 
                 Forms\Components\Select::make('catat_pakan_harian_id')
                     ->relationship('catatPakanHarian', 'tanggal')
                     ->label('Tanggal Catat Pakan Harian')
+                    ->options(function (Forms\Get $get) {
+                        $kolamId = $get('kolams_id');
+                        if (!$kolamId) {
+                            return [];
+                        }
+                        return \App\Models\CatatPakanHarian::where('kolam_id', $kolamId)
+                            ->pluck('tanggal', 'id');
+                    })
                     ->required(),
 
                 Forms\Components\DatePicker::make('report_month')

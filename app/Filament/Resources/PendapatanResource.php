@@ -29,6 +29,10 @@ class PendapatanResource extends Resource
             Forms\Components\Select::make('farms_id')
                 ->label('Farm')
                 ->relationship('farm', 'name')
+                ->options(function () {
+                    return \App\Models\Farm::where('user_id', auth()->id())
+                        ->pluck('name', 'id');
+                })
                 ->required(),
 
             Forms\Components\TextInput::make('saldo')

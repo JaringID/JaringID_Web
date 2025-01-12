@@ -31,11 +31,28 @@ class SiklusResource extends Resource
                     Select::make('farm_id')
                         ->label('Farm')
                         ->relationship('farm', 'name')
+                        ->options(function () {
+                            return \App\Models\Farm::where('user_id', auth()->id())
+                                ->pluck('name', 'id');
+                        })
+                        ->live()
+                        ->afterStateUpdated(function($state, Forms\Set $set) {
+                            $set('kolam_id', null);
+                        })
                         ->required(),
 
-                        Select::make('kolam_id')
+                    Select::make('kolam_id')
                         ->label('Kolam')
                         ->relationship('kolam', 'nama_kolam')
+                        ->options(function (Forms\Get $get) {
+                            $farmId = $get('farm_id'); // Changed from farms_id to farm_id
+                            if (!$farmId) {
+                                return [];
+                            }
+                            return \App\Models\Kolam::where('farm_id', $farmId)
+                                ->pluck('nama_kolam', 'id');
+                        })
+                        ->live()
                         ->required()
                         ->afterStateUpdated(function ($state) {
                             $kolam = Kolam::find($state);

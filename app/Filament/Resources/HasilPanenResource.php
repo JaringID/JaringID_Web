@@ -36,16 +36,47 @@ class HasilPanenResource extends Resource
                     Select::make('farms_id')
                         ->label('Farm')
                         ->relationship('farm', 'name')
+                        ->options(function () {
+                            return \App\Models\Farm::where('user_id', auth()->id())
+                                ->pluck('name', 'id');
+                        })
+                        ->live()
+                        ->afterStateUpdated(function($state, Forms\Set $set) {
+                            $set('kolams_id', null);
+                            $set('siklus_id', null);
+                            $set('hasil_panens_id', null);
+                        })
                         ->required(),
 
                     Select::make('kolams_id')
                         ->label('Kolam')
                         ->relationship('kolam', 'nama_kolam')
+                        ->options(function (Forms\Get $get) {
+                            $farmId = $get('farms_id');
+                            if (!$farmId) {
+                                return [];
+                            }
+                            return \App\Models\Kolam::where('farm_id', $farmId)
+                                ->pluck('nama_kolam', 'id');
+                        })
+                        ->live()
+                        ->afterStateUpdated(function($state, Forms\Set $set) {
+                            $set('siklus_id', null);
+                            $set('hasil_panens_id', null);
+                        })
                         ->required(),
 
                     Select::make('siklus_id')
                         ->label('Siklus')
                         ->relationship('siklus', 'tanggal_tebar')
+                        ->options(function (Forms\Get $get) {
+                            $kolamId = $get('kolams_id');
+                            if (!$kolamId) {
+                                return [];
+                            }
+                            return \App\Models\Siklus::where('kolam_id', $kolamId)
+                                ->pluck('status_siklus', 'id');
+                        })
                         ->required(),
 
                     DatePicker::make('tanggal_panen')
