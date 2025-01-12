@@ -2,29 +2,62 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use App\Models\Siklus;
+use App\Models\HasilPanen;
+use App\Models\Pendapatan;
+use App\Models\Pengeluaran;
 use Filament\Widgets\StatsOverviewWidget\Card;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class StatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
+        $userId = auth()->id(); // ID pengguna yang sedang login
+
+        // Hitung jumlah siklus yang dimiliki pengguna
+        $totalCycles = Siklus::whereHas('farm', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->count();
+
+        // Hitung total hasil panen dari tambak milik pengguna
+        $totalHarvest = HasilPanen::whereHas('farm', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->sum('total_berat');
+
+        // Hitung total pendapatan dari tambak milik pengguna
+        $totalIncome = Pendapatan::whereHas('farm', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->sum('pendapatan');
+
+        // Hitung total pengeluaran dari tambak milik pengguna
+        $totalExpense = Pengeluaran::whereHas('farm', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->sum('jumlah_pengeluaran');
+
+        // Hitung keseimbangan keuangan
+        $financialBalance = $totalIncome - $totalExpense;
+
         return [
-            Card::make('Unique views', '192.1k')
-                ->description('32k increase')
-                ->descriptionIcon('heroicon-o-shopping-cart'),
-            Card::make('Bounce rate', '21%')
-                ->description('7% increase')
-                ->descriptionIcon('heroicon-o-shopping-cart'),
-            Card::make('Average time on page', '3:12')
-                ->description('3% increase')
-                ->descriptionIcon('heroicon-o-shopping-cart'),
-            Card::make('Unique views', '192.1k')
-                ->description('32k increase')
-                ->descriptionIcon('heroicon-o-shopping-cart')
-                ->chart([7, 2, 10, 3, 15, 4, 17])
+            Card::make('Jumlah Siklus', $totalCycles)
+                ->description('Total siklus yang tercatat.')
+                ->color('primary'),
+
+            Card::make('Total Hasil Panen', number_format($totalHarvest, 2) . ' kg')
+                ->description('Total hasil panen dari semua siklus.')
                 ->color('success'),
+
+            Card::make('Total Pendapatan', 'Rp ' . number_format($totalIncome, 2))
+                ->description('Pendapatan dari semua sumber.')
+                ->color('success'),
+
+            Card::make('Total Pengeluaran', 'Rp ' . number_format($totalExpense, 2))
+                ->description('Pengeluaran untuk operasional.')
+                ->color('danger'),
+
+            Card::make('Keseimbangan Keuangan', 'Rp ' . number_format($financialBalance, 2))
+                ->description($financialBalance > 0 ? 'Keuntungan' : 'Kerugian')
+                ->color($financialBalance > 0 ? 'success' : 'danger'),
         ];
     }
 }

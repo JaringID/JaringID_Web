@@ -93,4 +93,9 @@ class FeedScheduleResource extends Resource
             'edit' => Pages\EditFeedSchedule::route('/{record}/edit'),
         ];
     }
+    public static function shouldRegisterNavigation(): bool
+{
+    // Return false untuk menghapus resource dari sidebar
+    return false;
+}
 }

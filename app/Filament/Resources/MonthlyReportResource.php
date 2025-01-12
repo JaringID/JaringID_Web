@@ -19,7 +19,6 @@ class MonthlyReportResource extends Resource
     protected static ?string $pluralLabel = 'Laporan Bulanan';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Manajemen Tambak';
     protected static ?string $navigationLabel = "Laporan Bulanan";
 
     public static function form(Form $form): Form
@@ -139,4 +138,11 @@ class MonthlyReportResource extends Resource
             'edit' => Pages\EditMonthlyReport::route('/{record}/edit'),
         ];
     }
+    public static function getEloquentQuery(): Builder
+{
+    // Membatasi data hanya untuk kolam milik user yang sedang login
+    return parent::getEloquentQuery()->whereHas('farm', function ($query) {
+        $query->where('user_id', auth()->id());
+    });
+}
 }

@@ -220,4 +220,11 @@ protected static function updateTotalHarga(callable $set, ?float $berat, ?float 
             'edit' => Pages\EditHasilPanen::route('/{record}/edit'),
         ];
     }
+    public static function getEloquentQuery(): Builder
+{
+    // Membatasi data hanya untuk kolam milik user yang sedang login
+    return parent::getEloquentQuery()->whereHas('farm', function ($query) {
+        $query->where('user_id', auth()->id());
+    });
+}
 }

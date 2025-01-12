@@ -10,6 +10,7 @@ class Pendapatan extends Model
     use HasFactory;
 
     protected $table = 'pendapatan';
+    
     protected $fillable = [
         'farms_id',
         'saldo',
@@ -21,6 +22,11 @@ class Pendapatan extends Model
     {
         return $this->belongsTo(Farm::class, 'farms_id');
     }
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 
     public function pengeluaran()
     {

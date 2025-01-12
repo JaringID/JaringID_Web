@@ -8,7 +8,7 @@ use Filament\Tables;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 
-class LatestOrders extends BaseWidget
+class Tambak extends BaseWidget
 {
     public function getHeading(): string
     {
@@ -26,7 +26,6 @@ class LatestOrders extends BaseWidget
     protected function getTableColumns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('user_id'),
             Tables\Columns\TextColumn::make('name')
                 ->label('Nama'),
             Tables\Columns\TextColumn::make('description')

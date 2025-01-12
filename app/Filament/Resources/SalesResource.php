@@ -92,4 +92,9 @@ class SalesResource extends Resource
             'edit' => Pages\EditSales::route('/{record}/edit'),
         ];
     }
+    public static function shouldRegisterNavigation(): bool
+{
+    // Return false untuk menghapus resource dari sidebar
+    return false;
+}
 }

@@ -1,6 +1,7 @@
 <?php
 namespace App\Filament\Resources;
 
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SiklusResource\Pages;
 use App\Models\Siklus;
 use Filament\Forms;
@@ -121,6 +122,7 @@ class SiklusResource extends Resource
                 ]),
             ]);
     }
+    
 
     public static function getRelations(): array
     {
@@ -128,6 +130,7 @@ class SiklusResource extends Resource
             // Tambahkan relasi jika ada
         ];
     }
+    
 
     public static function getPages(): array
     {
@@ -137,4 +140,13 @@ class SiklusResource extends Resource
             'edit' => Pages\EditSiklus::route('/{record}/edit'),
         ];
     }
+
+
+public static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()->whereHas('farm', function (Builder $query) {
+        $query->where('user_id', auth()->id());
+    });
+}
+
 }

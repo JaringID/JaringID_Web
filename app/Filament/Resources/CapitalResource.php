@@ -90,4 +90,9 @@ class CapitalResource extends Resource
             'edit' => Pages\EditCapital::route('/{record}/edit'),
         ];
     }
+    public static function shouldRegisterNavigation(): bool
+{
+    // Return false untuk menghapus resource dari sidebar
+    return false;
+}
 }

@@ -76,4 +76,9 @@ class EmployeeSalaryResource extends Resource
             'edit' => Pages\EditEmployeeSalary::route('/{record}/edit'),
         ];
     }
+    public static function shouldRegisterNavigation(): bool
+{
+    // Return false untuk menghapus resource dari sidebar
+    return false;
+}
 }

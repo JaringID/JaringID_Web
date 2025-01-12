@@ -1,0 +1,19 @@
+/* Customize the sidebar background color */
+[sidebar] {
+    background-color: #1a202c !important; /* Replace with your preferred color */
+}
+
+/* Change sidebar text color */
+[sidebar] a {
+    color: #ffffff !important; /* Replace with your preferred text color */
+}
+
+/* Change text hover color in the sidebar */
+[sidebar] a:hover {
+    color: #63b3ed !important; /* Replace with your hover color */
+}
+
+/* Customize sidebar icons color */
+[sidebar] svg {
+    color: #ffffff !important; /* Replace with your preferred icon color */
+}

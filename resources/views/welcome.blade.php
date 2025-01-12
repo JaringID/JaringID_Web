@@ -38,7 +38,7 @@
 
     <!-- Hero Section -->
     <section class="bg-white py-32 mt-0.5">
-        <div class="container mx-auto px-6 flex flex-col-reverse lg:flex-row items-center">
+        <div class="container mx-20 px-6 flex flex-col-reverse lg:flex-row items-center">
             <!-- Text Content -->
             <div class="lg:w-1/2 text-center lg:text-left">
                 <h1 class="text-4xl lg:text-5xl font-bold text-customBlue mb-4">
