@@ -18,7 +18,7 @@ class MonthlyReportResource extends Resource
     protected static ?string $model = MonthlyReport::class;
     protected static ?string $pluralLabel = 'Laporan Bulanan';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = "Laporan Bulanan";
 
     public static function form(Form $form): Form

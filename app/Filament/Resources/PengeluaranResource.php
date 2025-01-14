@@ -34,8 +34,15 @@ class PengeluaranResource extends Resource
                 })
                 ->required(),
 
-            Forms\Components\TextInput::make('jenis_pengeluaran')
+                Forms\Components\Select::make('jenis_pengeluaran')
                 ->label('Jenis Pengeluaran')
+                ->options([
+                    'biaya_pakan' => 'Biaya Pakan',
+                    'biaya_bibit' => 'Biaya Bibit',
+                    'gaji_pekerja' => 'Gaji Pekerja',
+                    'biaya_perawatan' => 'Biaya Perawatan',
+                    'biaya_lainnya' => 'Biaya Lainnya',
+                ])
                 ->required(),
 
             Forms\Components\TextInput::make('jumlah_pengeluaran')

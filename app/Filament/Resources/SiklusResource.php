@@ -26,7 +26,7 @@ class SiklusResource extends Resource
     public static function form(Forms\Form $form): Forms\Form
     {
         return $form
-            ->schema([ 
+            ->schema([
                 Card::make()->schema([
                     Select::make('farm_id')
                         ->label('Farm')
@@ -111,7 +111,6 @@ class SiklusResource extends Resource
                     ->getStateUsing(function ($record) {
                         // Cek apakah hasil panen tersedia
                         $hasilPanen = $record->hasilPanen()->latest()->first();
-                
                         if ($hasilPanen) {
                             return match ($hasilPanen->jenis_panen) {
                                 'Total' => 'Berhenti',
@@ -139,7 +138,6 @@ class SiklusResource extends Resource
                 ]),
             ]);
     }
-    
 
     public static function getRelations(): array
     {
@@ -147,7 +145,6 @@ class SiklusResource extends Resource
             // Tambahkan relasi jika ada
         ];
     }
-    
 
     public static function getPages(): array
     {
