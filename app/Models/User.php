@@ -68,6 +68,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Siklus::class);
     }
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_id')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+
+    public function friendRequests()
+    {
+        return $this->hasMany(Friend::class, 'friend_id')
+            ->where('status', 'pending');
+    }
 
     protected static function boot()
     {

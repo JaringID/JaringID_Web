@@ -35,11 +35,17 @@ class FarmResource extends Resource
                     ->label('Deskripsi Tambak')
                     ->nullable()
                     ->maxLength(1000),
-                Forms\Components\Select::make('user_id')
+                    Forms\Components\Select::make('user_id')
                     ->label('Manajer Tambak')
-                    ->relationship('user', 'name')
+                    ->options(fn () => auth()->user()
+                        ->friends()
+                        ->wherePivot('status', 'accepted')
+                        ->select('users.name', 'users.id') // Eksplisitkan tabel
+                        ->pluck('name', 'id'))
                     ->required()
-                    ->searchable(), // Memudahkan pencarian nama user
+                    ->searchable(),
+                
+                
             ]);
     }
 
