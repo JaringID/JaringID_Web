@@ -64,14 +64,26 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Farm::class);
     }
+    public function farms()
+    {
+        return $this->belongsToMany(Farm::class, 'farm_user')
+            ->withTimestamps();
+    }
     public function siklus()
     {
         return $this->hasMany(Siklus::class);
     }
+    // App\Models\User.php
+public function notifications()
+{
+    return $this->hasMany(Notification::class);
+}
+
     public function friends()
     {
         return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_id')
             ->withPivot('status')
+            ->wherePivot('status', 'accepted')
             ->withTimestamps();
     }
 
@@ -89,4 +101,9 @@ class User extends Authenticatable
             $user->profile_picture = null; // Pastikan defaultnya null
         });
     }
+public function isRole($role)
+{
+    return $this->role === $role;
+}
+
 }

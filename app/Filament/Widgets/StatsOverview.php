@@ -13,7 +13,9 @@ class StatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-        $userId = auth()->id(); // ID pengguna yang sedang login
+        $user = auth()->user(); // Mendapatkan pengguna yang sedang login
+        $userId = $user->id; // ID pengguna
+        $role = $user->role; // Peran pengguna (employee, farm_manager, owner)
 
         // Hitung jumlah siklus yang dimiliki pengguna
         $totalCycles = Siklus::whereHas('farm', function ($query) use ($userId) {
@@ -24,6 +26,19 @@ class StatsOverview extends BaseWidget
         $totalHarvest = HasilPanen::whereHas('farm', function ($query) use ($userId) {
             $query->where('user_id', $userId);
         })->sum('total_berat');
+
+        // Jika role adalah employee, hanya menampilkan siklus dan hasil panen
+        if ($role === 'employee') {
+            return [
+                Card::make('Jumlah Siklus', $totalCycles)
+                    ->description('Total siklus yang tercatat.')
+                    ->color('primary'),
+
+                Card::make('Total Hasil Panen', number_format($totalHarvest, 2) . ' kg')
+                    ->description('Total hasil panen dari semua siklus.')
+                    ->color('success'),
+            ];
+        }
 
         // Hitung total pendapatan dari tambak milik pengguna
         $totalIncome = Pendapatan::whereHas('farm', function ($query) use ($userId) {
@@ -38,6 +53,7 @@ class StatsOverview extends BaseWidget
         // Hitung keseimbangan keuangan
         $financialBalance = $totalIncome - $totalExpense;
 
+        // Untuk farm manager dan owner, tampilkan semua data
         return [
             Card::make('Jumlah Siklus', $totalCycles)
                 ->description('Total siklus yang tercatat.')

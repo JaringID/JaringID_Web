@@ -50,4 +50,10 @@ class Farm extends Model
     {
         return $this->hasMany(LaporanKeuangan::class, 'farms_id');
     }
+
+    public function employees()
+    {
+        return $this->belongsToMany(User::class, 'farm_user')
+            ->withTimestamps();
+    }
 }

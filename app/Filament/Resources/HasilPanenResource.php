@@ -251,6 +251,18 @@ protected static function updateTotalHarga(callable $set, ?float $berat, ?float 
             'edit' => Pages\EditHasilPanen::route('/{record}/edit'),
         ];
     }
+    public static function canCreate(): bool
+{
+    $user = auth()->user();
+    return in_array($user->role, ['owner', 'farm_manager']);
+}
+
+public static function canEdit($record): bool {
+    $user = auth()->user();
+    return in_array($user->role, ['owner', 'farm_manager']);
+}
+
+
     public static function getEloquentQuery(): Builder
 {
     // Membatasi data hanya untuk kolam milik user yang sedang login

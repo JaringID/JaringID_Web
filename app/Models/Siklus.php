@@ -112,4 +112,5 @@ class Siklus extends Model
             }
         });
     }
+    
 }

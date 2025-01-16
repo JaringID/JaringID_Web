@@ -103,6 +103,17 @@ class PengeluaranResource extends Resource
                 ]),
             ]);
     }
+    public static function canView($record): bool
+{
+    $user = auth()->user();
+    return in_array($user->role, ['owner', 'farm_manager']);
+}
+
+public static function canViewAny(): bool
+{
+    $user = auth()->user();
+    return in_array($user->role, ['owner', 'farm_manager']);
+}
 
     public static function getRelations(): array
     {

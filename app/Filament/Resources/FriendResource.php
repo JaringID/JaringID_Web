@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class FriendResource extends Resource
 {
     protected static ?string $model = Friend::class;
-    protected static ?string $pluralLabel = 'Pertemanan';
+    protected static ?string $pluralLabel = 'Status Kerja';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -30,18 +30,27 @@ class FriendResource extends Resource
 
 
 
-                Forms\Components\Select::make('friend_id')
-                ->label('Teman')
-                ->relationship('friend', 'name') // Relasi ke tabel teman
-                ->searchable() // Aktifkan pencarian
-                ->getSearchResultsUsing(function (string $search) {
-                    // Ambil hasil pencarian berdasarkan input pengguna
-                    return \App\Models\User::where('name', 'like', "%{$search}%")
-                        ->where('id', '!=', auth()->id()) // Hindari akun diri sendiri
-                        ->pluck('name', 'id');
-                })
-                ->required()
-                ->placeholder('Cari nama teman...'),
+    Forms\Components\Select::make('friend_id')
+    ->label('Karyawan')
+    ->relationship('friend', 'name')
+    ->searchable()
+    ->getSearchResultsUsing(function (string $search) {
+        return \App\Models\User::where('name', 'like', "%{$search}%")
+            ->where('id', '!=', auth()->id())
+            ->pluck('name', 'id');
+    })
+    ->required()
+    ->placeholder('Cari username karyawan...')
+    ->afterStateUpdated(function ($state, $component) {
+        $friend = \App\Models\User::find($state); // Temukan karyawan berdasarkan ID
+        if ($friend) {
+            \App\Models\Notification::create([
+                'user_id' => $friend->id,
+                'message' => 'Anda dipilih oleh manajer untuk bergabung.',
+            ]);
+        }
+    }),
+
             
 
 
@@ -55,12 +64,12 @@ class FriendResource extends Resource
         return $table
         ->columns([
             Tables\Columns\TextColumn::make('user.name')
-                ->label('Kamu')
+                ->label('Manajer')
                 ->sortable()
                 ->searchable(),
 
             Tables\Columns\TextColumn::make('friend.name')
-                ->label('Penerima')
+                ->label('Karyawan')
                 ->sortable()
                 ->searchable(),
 
@@ -104,6 +113,16 @@ class FriendResource extends Resource
             $query->where('user_id', auth()->id()) // Sebagai pengirim
                   ->orWhere('friend_id', auth()->id()); // Sebagai penerima
         });
+}
+public static function canCreate(): bool
+{
+    $user = auth()->user();
+    return in_array($user->role, ['owner', 'farm_manager']);
+}
+
+public static function canEdit($record): bool {
+    $user = auth()->user();
+    return in_array($user->role, ['owner', 'farm_manager']);
 }
 
 

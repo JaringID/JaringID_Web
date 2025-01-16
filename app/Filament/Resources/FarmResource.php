@@ -36,11 +36,11 @@ class FarmResource extends Resource
                     ->nullable()
                     ->maxLength(1000),
                     Forms\Components\Select::make('user_id')
-                    ->label('Manajer Tambak')
+                    ->label('Karyawan Tambak')
                     ->options(fn () => auth()->user()
                         ->friends()
                         ->wherePivot('status', 'accepted')
-                        ->select('users.name', 'users.id') // Eksplisitkan tabel
+                        ->select('users.name', 'users.id')
                         ->pluck('name', 'id'))
                     ->required()
                     ->searchable(),
@@ -70,7 +70,7 @@ class FarmResource extends Resource
                     ->label('Deskripsi Tambak')
                     ->limit(50), // Membatasi panjang teks deskripsi
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Manajer Tambak')
+                    ->label('Karyawan Tambak')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
