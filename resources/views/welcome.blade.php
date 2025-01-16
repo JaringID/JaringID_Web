@@ -10,39 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     @vite('resources/css/app.css')
-    <style>
-    .decoration-dot {
-        animation: float 3s ease-in-out infinite;
-    }
-
-    .decoration-circle {
-        animation: pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes float {
-
-        0%,
-        100% {
-            transform: translateY(0);
-        }
-
-        50% {
-            transform: translateY(-10px);
-        }
-    }
-
-    @keyframes pulse {
-
-        0%,
-        100% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.1);
-        }
-    }
-    </style>
 </head>
 
 <body class="font-poppins">
@@ -94,81 +61,63 @@
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <!-- <section
-        class="container mx-auto px-4 max-w-screen-xl py-16 md:py-32 flex flex-col-reverse md:flex-row items-center gap-12 md:gap-16 lg:gap-20">
-        <div class="md:w-1/2 text-center md:text-left">
-            <h1 class="text-3xl md:text-5xl font-bold text-customBlue mb-4">
-                Selamat Datang di JaringID
-            </h1>
-            <p class="text-gray-600 text-base md:text-lg mb-6">
-                Optimalkan Tambak Udang Anda dengan JaringID, Platform berbasis digital yang efisien dan mudah
-                digunakan.
-            </p>
-            <a href="{{route('filament.admin.auth.login')}}"
-                class="inline-block px-6 py-3 bg-customBlue text-white rounded-full hover:bg-customBlueHover">
-                Masuk
-            </a>
-        </div>
-        <div class="md:w-1/2 mb-10 md:mb-0 flex justify-center">
-            <div class="w-64 md:w-96 h-64 md:h-96 rounded-full overflow-hidden shadow-lg">
-                <img src="assets/Hero Image.png" alt="Hero Image" class="object-cover w-full h-full">
-            </div>
-        </div>
-    </section> -->
-
     <section class="container mx-auto px-4 max-w-screen-xl py-16 md:py-32 relative">
         <!-- Decorative elements -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <!-- Top left decorations -->
-            <svg class="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 text-blue-100" viewBox="0 0 100 100">
-                <circle class="decoration-circle" cx="10" cy="10" r="8" fill="currentColor" />
-                <circle class="decoration-dot" cx="30" cy="20" r="4" fill="currentColor" />
-                <circle class="decoration-dot" cx="15" cy="35" r="6" fill="currentColor" />
+            <svg class="absolute top-0 left-0 w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32" viewBox="0 0 100 100">
+                <circle class="decoration-circle custom-blue-30" cx="10" cy="10" r="8" fill="currentColor" />
+                <circle class="decoration-dot custom-blue-40" cx="30" cy="20" r="4" fill="currentColor" />
+                <circle class="decoration-dot custom-blue-50" cx="15" cy="35" r="6" fill="currentColor" />
             </svg>
 
             <!-- Top right decorations -->
-            <svg class="absolute top-0 right-0 w-32 h-32 md:w-40 md:h-40 text-blue-50" viewBox="0 0 100 100">
-                <path class="decoration-circle" d="M70 20 Q90 20 90 40 Q90 60 70 60 Q50 60 50 40 Q50 20 70 20"
-                    fill="currentColor" />
-                <circle class="decoration-dot" cx="80" cy="30" r="5" fill="currentColor" />
+            <svg class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40" viewBox="0 0 100 100">
+                <path class="decoration-circle custom-blue-20"
+                    d="M70 20 Q90 20 90 40 Q90 60 70 60 Q50 60 50 40 Q50 20 70 20" fill="currentColor" />
+                <circle class="decoration-dot custom-blue-40" cx="80" cy="30" r="5" fill="currentColor" />
             </svg>
 
             <!-- Bottom left decorations -->
-            <svg class="absolute bottom-0 left-0 w-40 h-40 md:w-48 md:h-48 text-blue-50" viewBox="0 0 100 100">
-                <path class="decoration-circle" d="M20 60 Q40 60 40 80 Q40 100 20 100 Q0 100 0 80 Q0 60 20 60"
-                    fill="currentColor" />
-                <circle class="decoration-dot" cx="25" cy="75" r="3" fill="currentColor" />
+            <svg class="absolute bottom-0 left-0 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48" viewBox="0 0 100 100">
+                <path class="decoration-circle custom-blue-20"
+                    d="M20 60 Q40 60 40 80 Q40 100 20 100 Q0 100 0 80 Q0 60 20 60" fill="currentColor" />
+                <circle class="decoration-dot custom-blue-30" cx="25" cy="75" r="3" fill="currentColor" />
             </svg>
         </div>
 
         <!-- Main content -->
-        <div class="flex flex-col-reverse md:flex-row items-center gap-12 md:gap-16 lg:gap-20 relative">
+        <div class="flex flex-col-reverse md:flex-row items-center gap-8 sm:gap-12 md:gap-16 lg:gap-20 relative">
             <div class="md:w-1/2 text-center md:text-left">
-                <h1 class="text-3xl md:text-5xl font-bold text-customBlue mb-4">
+                <h1 class="text-3xl md:text-5xl font-bold text-customBlue mb-4 font-poppins">
                     Selamat Datang di JaringID
                 </h1>
-                <p class="text-gray-600 text-base md:text-lg mb-6">
+                <p class="text-gray-600 text-base md:text-lg mb-6 font-poppins">
                     Optimalkan Tambak Udang Anda dengan JaringID, Platform berbasis digital yang efisien dan mudah
                     digunakan.
                 </p>
                 <a href="{{route('filament.admin.auth.login')}}"
-                    class="inline-block px-6 py-3 bg-customBlue text-white rounded-full hover:bg-customBlueHover transform hover:scale-105 transition-transform duration-200">
+                    class="inline-block px-6 py-3 bg-customBlue text-white rounded-full hover:bg-customBlueHover transform hover:scale-105 transition-transform duration-200 font-poppins">
                     Masuk
                 </a>
             </div>
-            <div class="md:w-1/2 mb-10 md:mb-0 flex justify-center relative">
+            <div class="md:w-1/2 mb-8 sm:mb-10 md:mb-0 flex justify-center relative">
                 <!-- Decorative circle behind image -->
-                <div class="absolute inset-0 bg-blue-50 rounded-full transform -rotate-6 scale-90"></div>
+                <div class="absolute inset-0 bg-customBlue/10 rounded-full transform -rotate-6 scale-90"></div>
                 <!-- Main image container -->
-                <div class="w-64 md:w-96 h-64 md:h-96 rounded-full overflow-hidden shadow-lg relative">
+                <div class="w-56 sm:w-64 md:w-96 h-56 sm:h-64 md:h-96 rounded-full overflow-hidden shadow-lg relative">
                     <img src="assets/Hero Image.png" alt="Hero Image" class="object-cover w-full h-full">
                 </div>
                 <!-- Floating dots around image -->
                 <div class="absolute inset-0">
-                    <div class="decoration-dot absolute top-1/4 right-0 w-3 h-3 bg-blue-200 rounded-full"></div>
-                    <div class="decoration-dot absolute bottom-1/4 left-0 w-4 h-4 bg-blue-100 rounded-full"></div>
-                    <div class="decoration-dot absolute top-0 left-1/4 w-2 h-2 bg-blue-300 rounded-full"></div>
+                    <div
+                        class="decoration-dot absolute top-1/4 right-0 w-2 sm:w-3 h-2 sm:h-3 bg-customBlue opacity-20 rounded-full">
+                    </div>
+                    <div
+                        class="decoration-dot absolute bottom-1/4 left-0 w-3 sm:w-4 h-3 sm:h-4 bg-customBlue opacity-30 rounded-full">
+                    </div>
+                    <div class="decoration-dot absolute top-0 left-1/4 w-2 h-2 bg-customBlue opacity-40 rounded-full">
+                    </div>
                 </div>
             </div>
         </div>
@@ -322,7 +271,7 @@
                     <p class="mt-4 text-gray-600 text-lg">
                         JaringID adalah sebuah startup teknologi yang berfokus pada digitalisasi
                         sektor tambak udang di Indonesia. Platform ini dikembangkan oleh 5 Mahasiswa
-                        dari Politeknik Negeri Bengkalis.
+                        dari.....
                     </p>
                     <div class="mt-8">
                         <a href="{{ route('aboutus') }}" class="text-customBlue hover:text-blue-500 font-medium">
