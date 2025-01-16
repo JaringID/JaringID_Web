@@ -25,6 +25,10 @@ Route::get('/', function () {
 //     return view('admin');
 // });
 
+Route::get('/aboutus', function () {
+    return view('aboutus');
+})->name('aboutus');
+
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');

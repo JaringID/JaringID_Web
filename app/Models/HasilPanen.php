@@ -36,7 +36,7 @@ class HasilPanen extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::saving(function ($model) {
             if ($model->total_berat && $model->harga_per_kg) {
                 $model->total_harga = $model->total_berat * $model->harga_per_kg;
@@ -59,7 +59,7 @@ class HasilPanen extends Model
                     if ($model->siklus) {
                         $model->siklus->update(['status_siklus' => 'berhenti']);
                     }
-                    
+
                     // Update kolam
                     if ($model->kolam) {
                         $model->kolam->setStatusTidakAktif();
@@ -77,7 +77,7 @@ class HasilPanen extends Model
         });
     }
 
-    
+
 
 
     /**
