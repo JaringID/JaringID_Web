@@ -17,7 +17,23 @@
     <nav class="sticky top-0 z-50 flex items-center justify-between px-4 py-4 bg-white shadow-md">
         <div class="container mx-auto px-4 max-w-screen-xl flex items-center justify-between">
             <div class="flex items-center">
-                <img src="{{ asset('assets/Jaring.png') }}" alt="Jaring Logo" class="h-8 md:h-10">
+                <a href="/" class="block group relative inline-block">
+                    <div class="absolute -inset-1 bg-customBlue/20 
+            rounded-lg 
+            opacity-0 
+            group-hover:opacity-100 
+            transition-opacity 
+            duration-300 
+            blur-md"></div>
+                    <img src="{{ asset('assets/Jaring.png') }}" alt="JaringID Logo" class="w-20 sm:w-24 md:w-28 lg:w-32 h-auto 
+                    relative 
+                    transition-all 
+                    duration-300 
+                    group-hover:scale-105 
+                    group-hover:brightness-110 
+                    rounded-lg 
+                    z-10">
+                </a>
             </div>
 
             <div class="hidden md:flex items-center space-x-8">

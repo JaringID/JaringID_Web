@@ -21,10 +21,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/admin', function () {
-//     return view('admin');
-// });
-
 Route::get('/aboutus', function () {
     return view('aboutus');
 })->name('aboutus');
@@ -33,4 +29,10 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
 Route::post('/api-register', [AuthController::class, 'register']);
+
+Route::post('/api-login', [AuthController::class, 'web_login']);

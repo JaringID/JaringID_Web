@@ -45,6 +45,31 @@ class AuthController extends Controller
         ], 200);
     }
 
+    public function web_login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['Email atau password tidak sesuai.'],
+            ]);
+        }
+
+        if (!in_array($user->role, ['employee', 'farm_manager', 'owner', 'technician'])) {
+            return response()->json([
+                'message' => 'Akses tidak diizinkan untuk role ini.',
+            ], 403);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return redirect()->route('filament.admin.pages.dashboard')->with('Success', 'Berhasil Login.');
+    }
 
     /**
      * Handle user registration.

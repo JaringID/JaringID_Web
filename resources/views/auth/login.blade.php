@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - JaringID</title>
+    <title>Login - JaringID</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap"
         rel="stylesheet">
     @vite('resources/css/app.css')
 </head>
@@ -23,6 +23,7 @@
             <div class="wave wave3"></div>
             <div class="wave wave4"></div>
         </div>
+
         <!-- Logo -->
         <div class="absolute top-6 right-6 sm:top-8 sm:right-8 md:top-10 md:right-10 lg:top-12 lg:left-12 z-20">
             <a href="/" class="block group relative inline-block">
@@ -48,8 +49,8 @@
             class="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 sm:p-8 lg:p-10 relative z-10">
             <!-- Header -->
             <div class="text-center">
-                <h2 class="text-2xl sm:text-3xl font-bold text-customBlue mb-2">Buat Akun</h2>
-                <p class="text-gray-500">Ayo bergabung dengan JaringID sekarang</p>
+                <h2 class="text-2xl sm:text-3xl font-bold text-customBlue mb-2">Masuk</h2>
+                <p class="text-gray-500">Selamat datang kembali di JaringID</p>
             </div>
 
             <!-- Alert Messages -->
@@ -91,26 +92,10 @@
             </div>
             @endif
 
-            <!-- Registration Form -->
-            <form action="{{ url('/api-register') }}" method="POST" class="space-y-6">
+            <!-- Login Form -->
+            <form action="{{ url('/api-login') }}" method="POST" class="space-y-6">
                 @csrf
                 <div class="space-y-5">
-                    <!-- Name Input -->
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
-                        <input type="text" id="name" name="name"
-                            class="appearance-none relative block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-300 text-gray-900 focus:outline-none focus:ring-customBlue focus:border-customBlue focus:z-10 sm:text-sm"
-                            required value="{{ old('name') }}" placeholder="Masukkan Nama Lengkap">
-                    </div>
-
-                    <!-- Phone Input -->
-                    <div>
-                        <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
-                        <input type="text" id="phone_number" name="phone_number"
-                            class="appearance-none relative block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-300 text-gray-900 focus:outline-none focus:ring-customBlue focus:border-customBlue focus:z-10 sm:text-sm"
-                            required value="{{ old('phone_number') }}" placeholder="Contoh: 081234567890">
-                    </div>
-
                     <!-- Email Input -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -126,73 +111,23 @@
                             class="appearance-none relative block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-300 text-gray-900 focus:outline-none focus:ring-customBlue focus:border-customBlue focus:z-10 sm:text-sm"
                             required placeholder="Minimal 8 Karakter">
                     </div>
-
-                    <!-- Confirm Password Input -->
-                    <div>
-                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Ulangi
-                            Password</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation"
-                            class="appearance-none relative block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-300 text-gray-900 focus:outline-none focus:ring-customBlue focus:border-customBlue focus:z-10 sm:text-sm"
-                            required placeholder="Konfirmasi Password">
-                    </div>
-
-                    <!-- Role Selection -->
-                    <div class="space-y-2">
-                        <p class="block text-sm font-medium text-gray-700">Pekerjaan</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <label
-                                class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="role" value="owner" required
-                                    {{ old('role') == 'owner' ? 'checked' : '' }}
-                                    class="h-4 w-4 text-customBlue focus:ring-customBlue">
-                                <span class="text-sm text-gray-700">Pemilik Tambak</span>
-                            </label>
-                            <label
-                                class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="role" value="technician" required
-                                    {{ old('role') == 'technician' ? 'checked' : '' }}
-                                    class="h-4 w-4 text-customBlue focus:ring-customBlue">
-                                <span class="text-sm text-gray-700">Teknisi</span>
-                            </label>
-                            <label
-                                class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                                <input type="radio" name="role" value="worker" required
-                                    {{ old('role') == 'worker' ? 'checked' : '' }}
-                                    class="h-4 w-4 text-customBlue focus:ring-customBlue">
-                                <span class="text-sm text-gray-700">Pekerja Tambak</span>
-                            </label>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Submit Button -->
                 <button type="submit"
                     class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-customBlue hover:bg-customBlueHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-customBlue transition-colors duration-200">
-                    Daftar
+                    Masuk
                 </button>
 
-                <!-- Sign In Link -->
+                <!-- Sign Up Link -->
                 <p class="text-center text-sm text-gray-500">
-                    Sudah mempunyai akun?
-                    <a href="{{route('filament.admin.auth.login')}}"
+                    Belum punya akun?
+                    <a href="{{ route('register') }}"
                         class="font-medium text-customBlue hover:text-customBlueHover transition-colors duration-200">
-                        Sign in
+                        Daftar
                     </a>
                 </p>
             </form>
-
-            <!-- Footer -->
-            <footer class="bg-white pt-8 pb-8">
-                <div class="container mx-auto px-4">
-                    <div class="border-t border-gray-200 pt-4">
-                        <div class="flex flex-col items-center space-y-4">
-                            <p class="text-xs md:text-sm text-gray-600 text-center">
-                                © {{ now()->year }} JaringID. All rights reserved.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
     </div>
 </body>
