@@ -13,6 +13,13 @@
 </head>
 
 <body class="font-poppins">
+    <!-- Loading Screen -->
+    <div id="loading" class="fixed inset-0 flex items-center justify-center bg-customBlue z-50">
+        <img src="assets/Jaring Logo.gif" alt="Loading..." class="w-72 h-46">
+    </div>
+
+    <div id="main-content" class="hidden"></div>
+
     <!-- Navbar -->
     <nav class="sticky top-0 z-50 flex items-center justify-between px-4 py-4 bg-white shadow-md">
         <div class="container mx-auto px-4 max-w-screen-xl flex items-center justify-between">
@@ -213,6 +220,9 @@
     <!-- Fitur 1: Manajemen Tambak -->
     <section class="bg-customBlue py-16 md:py-24">
         <div class="container mx-auto px-4 max-w-screen-xl">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-white mb-12">
+                Mengapa Harus Jaring?
+            </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
                 <div class="order-2 md:order-1">
                     <img src="assets/Landing Pic 1.png" alt="Management" class="w-full h-auto rounded-lg object-cover">
@@ -399,12 +409,52 @@
 
     <!-- Mobile Menu Toggle Script -->
     <script>
-    // Mobile Menu Toggle
-    document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
-        const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenu.classList.toggle('hidden');
-    });
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
     </script>
+
+    <script>
+        window.addEventListener('load', function() {
+            const loading = document.getElementById('loading');
+            const mainContent = document.getElementById('main-content');
+
+            setTimeout(function() {
+                loading.style.display = 'none';
+                mainContent.classList.remove('hidden');
+            }, 4500);
+        });
+    </script>
+
+    <script>
+        window.addEventListener('load', function() {
+            const loading = document.getElementById('loading');
+            const mainContent = document.getElementById('main-content');
+
+            // Cek apakah halaman di-refresh
+            const isPageReloaded = performance.navigation.type === 1;
+
+            // Cek apakah halaman sudah pernah dikunjungi sebelumnya
+            const isFirstVisit = !sessionStorage.getItem('welcomeVisited');
+
+            if (isPageReloaded || isFirstVisit) {
+                // Tampilkan loading jika halaman di-refresh atau baru pertama kali dikunjungi
+                setTimeout(function() {
+                    loading.style.display = 'none';
+                    mainContent.classList.remove('hidden');
+                }, 4500);
+
+                // Tandai bahwa halaman sudah dikunjungi
+                sessionStorage.setItem('welcomeVisited', 'true');
+            } else {
+                // Langsung tampilkan konten jika bukan reload dan bukan kunjungan pertama
+                loading.style.display = 'none';
+                mainContent.classList.remove('hidden');
+            }
+        });
+    </script>
+
 </body>
 
 </html>
