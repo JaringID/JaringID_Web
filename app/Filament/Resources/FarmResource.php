@@ -35,15 +35,8 @@ class FarmResource extends Resource
                     ->label('Deskripsi Tambak')
                     ->nullable()
                     ->maxLength(1000),
-                    Forms\Components\Select::make('user_id')
-                    ->label('Karyawan Tambak')
-                    ->options(fn () => auth()->user()
-                        ->friends()
-                        ->wherePivot('status', 'accepted')
-                        ->select('users.name', 'users.id')
-                        ->pluck('name', 'id'))
-                    ->required()
-                    ->searchable(),
+                    Forms\Components\Hidden::make('user_id')
+    ->default(auth()->id()),
                 
                 
             ]);
@@ -69,9 +62,9 @@ class FarmResource extends Resource
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi Tambak')
                     ->limit(50), // Membatasi panjang teks deskripsi
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Karyawan Tambak')
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('user.name')
+                //     ->label('Karyawan Tambak')
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime(),

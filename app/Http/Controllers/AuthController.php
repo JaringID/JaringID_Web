@@ -95,9 +95,7 @@ class AuthController extends Controller
             'role' => $request->role,
         ]);
 
-        return response()->json([
-            'message' => 'Akun berhasil dibuat!',
-            'user' => $user,
-        ], 201);
+        return redirect('/admin/login')->with('success', 'Akun berhasil dibuat! Silakan login.');
+
     }
 }

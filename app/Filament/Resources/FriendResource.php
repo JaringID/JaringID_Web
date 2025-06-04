@@ -134,4 +134,6 @@ public static function canEdit($record): bool {
             'edit' => Pages\EditFriend::route('/{record}/edit'),
         ];
     }
+
+
 }
