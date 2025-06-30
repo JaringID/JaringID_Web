@@ -97,6 +97,11 @@ return [
 ],
 
     'livewire_loading_delay' => 'default',
+    'theme' => [
+        'colors' => [
+            'primary' => '#00B894',
+        ],
+    ],
 ];
 
 

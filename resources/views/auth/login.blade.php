@@ -92,6 +92,14 @@
             </div>
             @endif
 
+            <!-- Tombol Login Google -->
+<a href="{{ route('auth.google.redirect') }}"
+    class="w-full flex justify-center items-center gap-2 py-3 px-4 border border-gray-300 text-sm font-medium rounded-lg bg-white text-gray-700 hover:bg-gray-50 transition mb-4">
+    <svg class="w-5 h-5" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.4 2.9l5.7-5.7C33.3 7.1 28.9 5 24 5 12.4 5 3 14.4 3 26s9.4 21 21 21c10.6 0 19.3-7.7 20.8-17.6.1-.8.2-1.6.2-2.4 0-1.5-.1-2.9-.4-4.3z"/><path fill="#FF3D00" d="M6.3 14.3l6.6 4.8C14.2 15.4 18.7 13 24 13c2.8 0 5.4 1.1 7.4 2.9l5.7-5.7C33.3 7.1 28.9 5 24 5c-6.6 0-12.4 3.1-16.1 8.1-.4.5-.8 1.1-1.2 1.7z"/><path fill="#4CAF50" d="M24 47c5.1 0 9.8-1.9 13.3-5l-6.2-5.1C29.3 39.3 26.7 40 24 40c-5.3 0-9.6-3.6-11.1-8.5H6.3c1.6 6.6 7.6 11.5 14.7 11.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3C34.7 32.9 30.8 36 26 36c-5.3 0-9.6-3.6-11.1-8.5H6.3c1.6 6.6 7.6 11.5 14.7 11.5 7.2 0 13.3-4.9 14.7-11.5.1-.5.2-1.1.3-1.6.1-.8.2-1.6.2-2.4 0-.4 0-.7-.1-1z"/></svg>
+    Login dengan Google
+</a>
+
+
             <!-- Login Form -->
             <form action="{{ url('/api-login') }}" method="POST" class="space-y-6">
                 @csrf

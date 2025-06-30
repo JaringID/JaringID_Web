@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\Tambak;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -9,6 +10,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -17,6 +19,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -28,8 +32,10 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => '#00AEEF',
             ])
+            
+            ->font('Manrope')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -39,6 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
+                Tambak::class,
             ])
             
             ->middleware([
@@ -56,4 +63,21 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
     }
+    public function boot(): void
+{
+    FilamentView::registerRenderHook(
+        PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
+        fn () => view('vendor.filament-panels.hooks.login-google-button'),
+    );
+    FilamentView::registerRenderHook(
+        PanelsRenderHook::HEAD_END,
+        fn () => '<link rel="stylesheet" href="' . asset('css/sidebar-custom.css') . '"/>'
+    );
+     FilamentView::registerRenderHook(
+        PanelsRenderHook::TOPBAR_START,
+        fn () => view('layouts.topbar-brand')
+    );
+
+    
+}
 }

@@ -1,0 +1,88 @@
+/* Sidebar container */
+aside.fi-sidebar {
+    background-color: #00AEEF !important;
+    color: white !important;
+}
+
+/* Link (normal) */
+aside.fi-sidebar nav a {
+    color: white !important;
+    border-radius: 8px !important;
+    padding-left: 1rem !important;
+    margin: 0.25rem 0;
+    
+}
+
+/* Label teks di menu sidebar */
+aside.fi-sidebar nav a span {
+    
+    color: white !important;
+}
+
+/* Hover */
+aside.fi-sidebar nav a:hover {
+    background-color: #1d4ed8 !important;
+    color: white !important;
+}
+
+/* Hover teks juga */
+aside.fi-sidebar nav a:hover span {
+    
+    color:  white !important;
+}
+/* ACTIVE item */
+aside.fi-sidebar nav a.fi-active {
+    background-color: #00AEEF !important;
+    color: white !important;
+}
+
+/* ACTIVE text */
+aside.fi-sidebar nav a.fi-active span {
+    color: white !important;
+}
+
+/* Icon */
+aside.fi-sidebar nav svg {
+    color: white !important;
+    stroke: white !important;
+}
+
+/* Ganti warna topbar */
+.fi-topbar nav {
+    background-color: #00AEEF !important;
+    color: white !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Biar ikon dan teks di topbar ikut putih */
+.fi-topbar * {
+    color: white !important;
+    fill: white !important;
+    stroke: white !important;
+}
+/* Ganti warna teks brand/logo di sidebar header (Jaring.id) */
+aside.fi-sidebar .fi-sidebar-header {
+    color: white !important;
+    background-color: #00AEEF !important;
+}
+
+/* Kadang dia pake span atau h1/h2 di dalam */
+aside.fi-sidebar .fi-sidebar-header * {
+    color: white !important;
+}
+.topbar-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.topbar-title img {
+    height: 80px;
+    width: auto;
+}
+
+
+
+
+

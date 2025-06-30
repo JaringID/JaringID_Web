@@ -6,279 +6,204 @@ use App\Models\Pendapatan;
 use App\Models\Pengeluaran;
 use App\Models\LaporanKeuangan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class KeuanganController extends Controller
 {
+    /**
+     * Mencatat saldo awal atau tambahan saldo.
+     */
     public function catatSaldo(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'farms_id' => 'required|exists:farms,id',
-            'saldo' => 'required|numeric|min:0',
-            'tanggal' => 'required|date_format:d/m/Y',
+            'saldo'    => 'required|numeric|min:0',
+            'tanggal'  => 'required|date_format:d/m/Y',
         ]);
 
-        $tanggal = \Carbon\Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
+        $tanggal = Carbon::createFromFormat('d/m/Y', $validated['tanggal'])->format('Y-m-d');
 
-        // Cek apakah ada data dengan farms_id dan tanggal yang sama
-        $pendapatan = Pendapatan::where('farms_id', $request->farms_id)
-            ->where('tanggal', $tanggal)
-            ->first();
+        $pendapatan = Pendapatan::firstOrNew([
+            'farms_id' => $validated['farms_id'],
+            'tanggal'  => $tanggal,
+        ]);
 
-        if ($pendapatan) {
-            // Jika data ditemukan, update saldo
-            $pendapatan->saldo += $request->saldo;
-            $pendapatan->save();
+        if ($pendapatan->exists) {
+            $pendapatan->saldo += $validated['saldo'];
         } else {
-            // Jika data tidak ditemukan, buat baris baru
-            $lastSaldo = Pendapatan::where('farms_id', $request->farms_id)->latest('tanggal')->value('saldo') ?? 0;
-            $updatedSaldo = $lastSaldo + $request->saldo;
-
-            $pendapatan = Pendapatan::create([
-                'farms_id' => $request->farms_id,
-                'saldo' => $updatedSaldo,
-                'tanggal' => $tanggal,
-            ]);
+            $lastSaldo = Pendapatan::where('farms_id', $validated['farms_id'])->latest('tanggal')->value('saldo') ?? 0;
+            $pendapatan->saldo = $lastSaldo + $validated['saldo'];
         }
+
+        $pendapatan->save();
 
         return response()->json([
             'message' => 'Saldo berhasil dicatat.',
-            'data' => $pendapatan,
+            'data'    => $pendapatan,
         ], 200);
     }
 
+    /**
+     * Mencatat pendapatan baru dan update saldo.
+     */
     public function catatPendapatan(Request $request)
     {
-        $request->validate([
-            'farms_id' => 'required|exists:farms,id',
+        $validated = $request->validate([
+            'farms_id'   => 'required|exists:farms,id',
             'pendapatan' => 'required|numeric|min:0',
-            'tanggal' => 'required|date_format:d/m/Y',
+            'tanggal'    => 'required|date_format:d/m/Y',
         ]);
 
-        $tanggal = \Carbon\Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
+        $tanggal = Carbon::createFromFormat('d/m/Y', $validated['tanggal'])->format('Y-m-d');
 
-        // Cek apakah ada data pendapatan dengan tanggal dan farms_id yang sama
-        $pendapatan = Pendapatan::where('farms_id', $request->farms_id)
-            ->where('tanggal', $tanggal)
-            ->first();
+        $pendapatan = Pendapatan::firstOrNew([
+            'farms_id' => $validated['farms_id'],
+            'tanggal'  => $tanggal,
+        ]);
 
-        if ($pendapatan) {
-            // Jika ditemukan, update pendapatan dan saldo
-            $pendapatan->pendapatan += $request->pendapatan;
-            $pendapatan->saldo += $request->pendapatan;
-            $pendapatan->save();
+        if ($pendapatan->exists) {
+            $pendapatan->pendapatan += $validated['pendapatan'];
+            $pendapatan->saldo += $validated['pendapatan'];
         } else {
-            // Jika tidak ditemukan, buat data baru
-            $lastSaldo = Pendapatan::where('farms_id', $request->farms_id)->latest('tanggal')->value('saldo') ?? 0;
-            $updatedSaldo = $lastSaldo + $request->pendapatan;
-
-            $pendapatan = Pendapatan::create([
-                'farms_id' => $request->farms_id,
-                'pendapatan' => $request->pendapatan,
-                'saldo' => $updatedSaldo,
-                'tanggal' => $tanggal,
-            ]);
+            $lastSaldo = Pendapatan::where('farms_id', $validated['farms_id'])->latest('tanggal')->value('saldo') ?? 0;
+            $pendapatan->pendapatan = $validated['pendapatan'];
+            $pendapatan->saldo = $lastSaldo + $validated['pendapatan'];
         }
+
+        $pendapatan->save();
 
         return response()->json([
             'message' => 'Pendapatan berhasil dicatat.',
-            'data' => $pendapatan,
+            'data'    => $pendapatan,
         ], 200);
     }
 
+    /**
+     * Mencatat pengeluaran dan mengurangi saldo.
+     */
     public function storePengeluaran(Request $request)
     {
-        $request->validate([
-            'farms_id' => 'required|exists:farms,id',
-            'jenis_pengeluaran' => 'required|in:biaya_pakan,biaya_bibit,gaji_pekerja,biaya_perawatan,biaya_lainnya',
+        $validated = $request->validate([
+            'farms_id'           => 'required|exists:farms,id',
+            'jenis_pengeluaran'  => 'required|in:biaya_pakan,biaya_bibit,gaji_pekerja,biaya_perawatan,biaya_lainnya',
             'jumlah_pengeluaran' => 'required|numeric|min:0',
-            'tanggal' => 'required|date_format:d/m/Y',
+            'tanggal'            => 'required|date_format:d/m/Y',
         ]);
 
-        $tanggal = \Carbon\Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d');
+        $tanggal = Carbon::createFromFormat('d/m/Y', $validated['tanggal'])->format('Y-m-d');
 
-        $pendapatan = Pendapatan::where('farms_id', $request->farms_id)->latest('tanggal')->first();
+        $pendapatan = Pendapatan::where('farms_id', $validated['farms_id'])->latest('tanggal')->first();
 
         if (!$pendapatan) {
-            return response()->json([
-                'message' => 'Tidak ditemukan saldo sebelumnya untuk farm ini.',
-            ], 400);
+            return response()->json(['message' => 'Tidak ditemukan saldo sebelumnya.'], 400);
         }
 
-        if ($pendapatan->saldo < $request->jumlah_pengeluaran) {
-            return response()->json([
-                'message' => 'Saldo tidak mencukupi untuk pengeluaran ini.',
-            ], 400);
+        if ($pendapatan->saldo < $validated['jumlah_pengeluaran']) {
+            return response()->json(['message' => 'Saldo tidak mencukupi.'], 400);
         }
 
-        // Kurangi saldo pada pendapatan
-        $pendapatan->saldo -= $request->jumlah_pengeluaran;
-        $pendapatan->save();
+        $pendapatan->decrement('saldo', $validated['jumlah_pengeluaran']);
 
         $pengeluaran = Pengeluaran::create([
-            'farms_id' => $request->farms_id,
-            'jenis_pengeluaran' => $request->jenis_pengeluaran,
-            'jumlah_pengeluaran' => $request->jumlah_pengeluaran,
-            'tanggal' => $tanggal,
+            'farms_id'           => $validated['farms_id'],
+            'jenis_pengeluaran'  => $validated['jenis_pengeluaran'],
+            'jumlah_pengeluaran' => $validated['jumlah_pengeluaran'],
+            'tanggal'            => $tanggal,
         ]);
 
         return response()->json([
             'message' => 'Pengeluaran berhasil dicatat.',
             'data' => [
-                'pengeluaran' => $pengeluaran,
-                'saldo_terbaru' => $pendapatan->saldo,
+                'pengeluaran'    => $pengeluaran,
+                'saldo_terbaru'  => $pendapatan->saldo,
             ],
         ], 201);
     }
 
+    /**
+     * Menampilkan laporan keuangan bulanan.
+     */
     public function getLaporanKeuangan(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'farms_id' => 'required|exists:farms,id',
-            'bulan' => 'required|integer|min:1|max:12',
-            'tahun' => 'required|integer|min:2000|max:' . date('Y'),
+            'bulan'    => 'required|integer|min:1|max:12',
+            'tahun'    => 'required|integer|min:2000|max:' . date('Y'),
         ]);
 
-        $farms_id = $request->farms_id;
-        $bulan = $request->bulan;
-        $tahun = $request->tahun;
+        $farms_id = $validated['farms_id'];
+        $bulan    = $validated['bulan'];
+        $tahun    = $validated['tahun'];
 
-        // Total pendapatan per bulan
+        $pengeluaran = Pengeluaran::where('farms_id', $farms_id)
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun);
+
+        $rincian = [
+            'total_biaya_pakan'     => $pengeluaran->clone()->where('jenis_pengeluaran', 'biaya_pakan')->sum('jumlah_pengeluaran'),
+            'total_biaya_bibit'     => $pengeluaran->clone()->where('jenis_pengeluaran', 'biaya_bibit')->sum('jumlah_pengeluaran'),
+            'total_gaji_pekerja'    => $pengeluaran->clone()->where('jenis_pengeluaran', 'gaji_pekerja')->sum('jumlah_pengeluaran'),
+            'total_biaya_perawatan' => $pengeluaran->clone()->where('jenis_pengeluaran', 'biaya_perawatan')->sum('jumlah_pengeluaran'),
+            'total_biaya_lainnya'   => $pengeluaran->clone()->where('jenis_pengeluaran', 'biaya_lainnya')->sum('jumlah_pengeluaran'),
+        ];
+
+        $totalPengeluaran = array_sum($rincian);
+
         $totalPendapatan = Pendapatan::where('farms_id', $farms_id)
             ->whereMonth('tanggal', $bulan)
             ->whereYear('tanggal', $tahun)
             ->sum('pendapatan');
 
-        // Total pengeluaran per kategori per bulan
-        $totalBiayaPakan = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'biaya_pakan')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        $totalBiayaBibit = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'biaya_bibit')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        $totalGajiPekerja = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'gaji_pekerja')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        $totalBiayaPerawatan = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'biaya_perawatan')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        $totalBiayaLainnya = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'biaya_lainnya')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        // Total pengeluaran
-        $totalPengeluaran = $totalBiayaPakan + $totalBiayaBibit + $totalGajiPekerja + $totalBiayaPerawatan + $totalBiayaLainnya;
-
-        // Keuntungan bersih (pendapatan - pengeluaran)
         $keuntunganBersih = $totalPendapatan - $totalPengeluaran;
 
-        // Return JSON response
         return response()->json([
             'message' => 'Laporan berhasil diambil',
-            'data' => [
-                'farms_id' => $farms_id,
-                'year' => $tahun,
-                'month' => $bulan,
-                'total_pendapatan' => $totalPendapatan,
-                'total_pengeluaran' => $totalPengeluaran,
-                'keuntungan_bersih' => $keuntunganBersih,
-                'rincian_pengeluaran' => [
-                    'total_biaya_pakan' => $totalBiayaPakan,
-                    'total_biaya_bibit' => $totalBiayaBibit,
-                    'total_gaji_pekerja' => $totalGajiPekerja,
-                    'total_biaya_perawatan' => $totalBiayaPerawatan,
-                    'total_biaya_lainnya' => $totalBiayaLainnya,
-                ],
+            'data'    => [
+                'farms_id'           => $farms_id,
+                'year'               => $tahun,
+                'month'              => $bulan,
+                'total_pendapatan'   => $totalPendapatan,
+                'total_pengeluaran'  => $totalPengeluaran,
+                'keuntungan_bersih'  => $keuntunganBersih,
+                'rincian_pengeluaran'=> $rincian,
             ]
         ]);
     }
 
+    /**
+     * Menyimpan laporan keuangan bulanan ke database.
+     */
     public function storeLaporanKeuangan(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'farms_id' => 'required|exists:farms,id',
-            'bulan' => 'required|integer|min:1|max:12',
-            'tahun' => 'required|integer|min:2000|max:' . date('Y'),
+            'bulan'    => 'required|integer|min:1|max:12',
+            'tahun'    => 'required|integer|min:2000|max:' . date('Y'),
         ]);
 
-        $farms_id = $request->farms_id;
-        $bulan = $request->bulan;
-        $tahun = $request->tahun;
+        $farms_id = $validated['farms_id'];
+        $bulan    = $validated['bulan'];
+        $tahun    = $validated['tahun'];
 
-        // Mengambil data laporan keuangan
-        $totalPendapatan = Pendapatan::where('farms_id', $farms_id)
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('pendapatan');
+        $laporan = new LaporanKeuangan([
+            'farms_id'             => $farms_id,
+            'year'                 => $tahun,
+            'month'                => $bulan,
+            'total_pendapatan'     => Pendapatan::where('farms_id', $farms_id)->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)->sum('pendapatan'),
+            'total_pengeluaran'    => Pengeluaran::where('farms_id', $farms_id)->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)->sum('jumlah_pengeluaran'),
+            'total_biaya_bibit'    => Pengeluaran::where('farms_id', $farms_id)->where('jenis_pengeluaran', 'biaya_bibit')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)->sum('jumlah_pengeluaran'),
+            'total_biaya_pakan'    => Pengeluaran::where('farms_id', $farms_id)->where('jenis_pengeluaran', 'biaya_pakan')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)->sum('jumlah_pengeluaran'),
+            'total_gaji_karyawan'  => Pengeluaran::where('farms_id', $farms_id)->where('jenis_pengeluaran', 'gaji_pekerja')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)->sum('jumlah_pengeluaran'),
+            'total_biaya_perawatan'=> Pengeluaran::where('farms_id', $farms_id)->where('jenis_pengeluaran', 'biaya_perawatan')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)->sum('jumlah_pengeluaran'),
+            'total_biaya_lainnya'  => Pengeluaran::where('farms_id', $farms_id)->where('jenis_pengeluaran', 'biaya_lainnya')->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun)->sum('jumlah_pengeluaran'),
+        ]);
 
-        $totalPengeluaran = Pengeluaran::where('farms_id', $farms_id)
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
+        $laporan->keuntungan_bersih = $laporan->total_pendapatan - $laporan->total_pengeluaran;
+        $laporan->save();
 
-        $totalBiayaBibit = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'biaya_bibit')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        $totalBiayaPakan = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'biaya_pakan')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        $totalGajiKaryawan = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'gaji_pekerja')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        $totalBiayaPerawatan = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'biaya_perawatan')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        $totalBiayaLainnya = Pengeluaran::where('farms_id', $farms_id)
-            ->where('jenis_pengeluaran', 'biaya_lainnya')
-            ->whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->sum('jumlah_pengeluaran');
-
-        $keuntunganBersih = $totalPendapatan - $totalPengeluaran;
-
-        $laporanKeuangan = new LaporanKeuangan();
-        $laporanKeuangan->farms_id = $farms_id;
-        $laporanKeuangan->year = $tahun;
-        $laporanKeuangan->month = $bulan;
-        $laporanKeuangan->total_pendapatan = $totalPendapatan;
-        $laporanKeuangan->total_pengeluaran = $totalPengeluaran;
-        $laporanKeuangan->keuntungan_bersih = $keuntunganBersih;
-        $laporanKeuangan->total_biaya_bibit = $totalBiayaBibit;
-        $laporanKeuangan->total_biaya_pakan = $totalBiayaPakan;
-        $laporanKeuangan->total_gaji_karyawan = $totalGajiKaryawan;
-        $laporanKeuangan->total_biaya_perawatan = $totalBiayaPerawatan;
-        $laporanKeuangan->total_biaya_lainnya = $totalBiayaLainnya;
-        $laporanKeuangan->save();
-
-        // Return response JSON
         return response()->json([
             'message' => 'Laporan keuangan berhasil disimpan',
-            'data' => $laporanKeuangan
+            'data'    => $laporan,
         ], 201);
     }
 }

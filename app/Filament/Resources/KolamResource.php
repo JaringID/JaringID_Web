@@ -17,6 +17,7 @@ use Filament\Tables\Columns\BadgeColumn;
 class KolamResource extends Resource
 {
     protected static ?string $model = Kolam::class;
+    protected static ?string $navigationLabel = 'Daftar Kolam';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 

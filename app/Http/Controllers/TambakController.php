@@ -2,49 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Farm; // Pastikan ini adalah model Farm, bukan Tambak
+use App\Models\Farm;
 use Illuminate\Http\Request;
 
 class TambakController extends Controller
 {
+    /**
+     * Menyimpan data tambak (farm) baru.
+     */
     public function store(Request $request)
     {
-        // Validasi data yang masuk
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'kolam' => 'nullable|integer|min:0',
-            'lokasi' => 'required|string',
-            'description' => 'nullable|string', // Pastikan ini nullable jika tidak wajib
+            'name'        => 'required|string|max:255',
+            'kolam'       => 'nullable|integer|min:0',
+            'lokasi'      => 'required|string',
+            'description' => 'nullable|string',
         ]);
 
-        // Menyimpan data tambak baru menggunakan model Farm
-        $farm = new Farm(); // Gunakan model Farm di sini
-        $farm->name = $validated['name'];
-        $farm->kolam = $validated['kolam'];
-        $farm->lokasi = $validated['lokasi'];
-        $farm->description = $validated['description'] ?? ''; // Jika tidak ada deskripsi, isi dengan string kosong
-        $farm->user_id = auth()->user()->id; // Menetapkan user_id sesuai user yang sedang login
+        $farm = new Farm();
+        $farm->name        = $validated['name'];
+        $farm->kolam       = $validated['kolam'] ?? 0;
+        $farm->lokasi      = $validated['lokasi'];
+        $farm->description = $validated['description'] ?? '';
+        $farm->user_id     = auth()->id();
         $farm->save();
 
-        // Mengembalikan respons sukses
         return response()->json([
             'message' => 'Tambak berhasil dibuat!',
-            'data' => $farm // Kembalikan data farm yang telah disimpan
-        ], 201); // Status HTTP 201 Created
+            'data'    => $farm,
+        ], 201);
     }
+
+    /**
+     * Menampilkan semua tambak milik user yang login.
+     */
     public function index(Request $request)
     {
-        $user = $request->user(); // Mendapatkan pengguna yang sedang login
-        $tambak = Farm::where('user_id', $user->id)->get(); // Filter berdasarkan user_id
-        return response()->json($tambak);
-    }
-
-    // Menambahkan filter untuk mendapatkan tambak berdasarkan user_id
-    public function getUserTambaks(Request $request)
-    {
-        $user = $request->user(); // Mendapatkan user yang sedang login berdasarkan token
-        $tambaks = Farm::where('user_id', $user->id)->get(); // Mengambil tambak berdasarkan user_id
+        $user = $request->user();
+        $tambaks = Farm::where('user_id', $user->id)->get();
 
         return response()->json($tambaks);
+    }
+
+    /**
+     * Mendapatkan tambak berdasarkan user login (duplikat dari index, tapi bisa untuk endpoint khusus).
+     */
+    public function getUserTambaks(Request $request)
+    {
+        $user = $request->user();
+        $tambaks = Farm::where('user_id', $user->id)->get();
+
+        return response()->json([
+            'message' => 'Data tambak berdasarkan user berhasil diambil.',
+            'data'    => $tambaks,
+        ]);
     }
 }

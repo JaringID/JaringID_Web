@@ -2,40 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kolam;
-use App\Models\Siklus;
 use App\Models\HasilPanen;
+use App\Models\Pendapatan;
 use Illuminate\Http\Request;
 
 class HasilPanenController extends Controller
 {
     /**
-     * Simpan data hasil panen.
+     * Menyimpan data hasil panen dan memperbarui pendapatan.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
-        // Validasi data yang diterima
-        $validatedData = $request->validate([
-            'farms_id' => 'required|integer',
-            'kolams_id' => 'required|integer',
-            'siklus_id' => 'required|integer',
+        // Validasi data input
+        $validated = $request->validate([
+            'farms_id'      => 'required|integer',
+            'kolams_id'     => 'required|integer',
+            'siklus_id'     => 'required|integer',
             'tanggal_panen' => 'required|date',
-            'jenis_panen' => 'required|string|in:Total,Parsial,Gagal',
-            'total_berat' => 'required|numeric',
-            'harga_per_kg' => 'required|numeric',
-            'total_harga' => 'required|numeric',
-            'pembeli' => 'nullable|string',
-            'catatan' => 'nullable|string',
+            'jenis_panen'   => 'required|in:Total,Parsial,Gagal',
+            'total_berat'   => 'required|numeric',
+            'harga_per_kg'  => 'required|numeric',
+            'total_harga'   => 'required|numeric',
+            'pembeli'       => 'nullable|string',
+            'catatan'       => 'nullable|string',
         ]);
 
-        // Simpan data ke tabel hasil_panen
-        $hasilPanen = HasilPanen::create($validatedData);
+        // Simpan hasil panen
+        $hasilPanen = HasilPanen::create($validated);
 
-        // Update tabel pendapatan
-        $pendapatan = \App\Models\Pendapatan::firstOrCreate(
+        // Cek atau buat pendapatan harian
+        $pendapatan = Pendapatan::firstOrCreate(
             [
-                'farms_id' => $validatedData['farms_id'],
-                'tanggal' => $validatedData['tanggal_panen'],
+                'farms_id' => $validated['farms_id'],
+                'tanggal'  => $validated['tanggal_panen'],
             ],
             [
                 'saldo' => 0,
@@ -43,14 +45,14 @@ class HasilPanenController extends Controller
             ]
         );
 
-        // Tambahkan total_harga ke kolom pendapatan dan saldo
-        $pendapatan->increment('pendapatan', $validatedData['total_harga']);
-        $pendapatan->increment('saldo', $validatedData['total_harga']);
+        // Tambahkan nominal ke pendapatan dan saldo
+        $pendapatan->increment('pendapatan', $validated['total_harga']);
+        $pendapatan->increment('saldo', $validated['total_harga']);
 
-        // Return response ke client
+        // Kirim respon ke client
         return response()->json([
             'success' => true,
-            'message' => 'Hasil panen berhasil disimpan dan pendapatan diperbarui.',
+            'message' => 'Hasil panen berhasil disimpan & pendapatan diperbarui.',
             'data' => $hasilPanen,
         ], 201);
     }

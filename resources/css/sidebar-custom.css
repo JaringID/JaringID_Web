@@ -1,19 +1,32 @@
-/* Customize the sidebar background color */
-[sidebar] {
-    background-color: #1a202c !important; /* Replace with your preferred color */
+/* Ganti warna background sidebar */
+.fi-sidebar {
+    background-color: #1a202c !important; /* dark blue */
 }
 
-/* Change sidebar text color */
-[sidebar] a {
-    color: #ffffff !important; /* Replace with your preferred text color */
+/* Ganti warna teks sidebar */
+.fi-sidebar nav a {
+    color: #ffffff !important;
 }
 
-/* Change text hover color in the sidebar */
-[sidebar] a:hover {
-    color: #63b3ed !important; /* Replace with your hover color */
+/* Hover teks menu */
+.fi-sidebar nav a:hover {
+    color: #63b3ed !important; /* light blue */
 }
 
-/* Customize sidebar icons color */
-[sidebar] svg {
-    color: #ffffff !important; /* Replace with your preferred icon color */
+/* Ganti warna icon SVG sidebar */
+.fi-sidebar nav a svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* Hover icon */
+.fi-sidebar nav a:hover svg {
+    color: #63b3ed !important;
+    stroke: #63b3ed !important;
+}
+
+/* Aktif menu */
+.fi-sidebar nav a.fi-active {
+    background-color: #2b6cb0 !important; /* biru lebih terang */
+    color: white !important;
 }
